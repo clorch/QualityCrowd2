@@ -188,9 +188,9 @@ class Batch extends Base
 
 	    	if ($includeResults) {
 	    		$results = $store->readWorkerCSV('results', $this->batchId, $wid);
-	    		$durations = array();
 
 	    		// calculate durations
+	    		$durations = array();
 	    		if (is_array($results))
 	    		{
 	    			$lastTimestamp = $meta['timestamp'];
@@ -199,6 +199,13 @@ class Batch extends Base
 						$durations[$stepId] = $stepResults[1] - $lastTimestamp;
 						$lastTimestamp = $stepResults[1];
 					}
+				}
+
+				// sort step id
+				if (is_array($results)) {
+					usort($results, function($a, $b) {
+					    return $a[0] - $b[0];
+					});
 				}
 
 				$workers[$wid]['durations'] = $durations;
@@ -218,10 +225,9 @@ class Batch extends Base
 		{	
 			if (!is_array($w['results'])) continue;
 
-			foreach($w['results'] as $stepId => $stepResults)
-			{
-				$steps[$stepId]['command'] = $stepResults[1];
-				
+			foreach($w['results'] as $stepResults)
+			{			
+				$stepId = $stepResults[0];
 				array_shift($stepResults);
 				array_shift($stepResults);
 				$steps[$stepId]['results'][$wid] = $stepResults;
@@ -312,8 +318,38 @@ class Batch extends Base
 
 	public function getStepObject($stepId, $workerId)
 	{
-		$step = $this->steps()[$stepId];
-		$stepObject = new Step($step, $this, $workerId, $stepId);
+		$store = new DataStore();
+		$map = $store->readWorker('stepMap', null, $this->batchId, $workerId);
+
+		if (is_null($map)) {
+			$map = $this->createStepMap();
+			$store->writeWorker('stepMap', $map, $this->batchId, $workerId);
+		}
+
+		$step = $this->steps()[$map[$stepId]];
+		$stepObject = new Step($step, $this, $workerId, $map[$stepId]);
 		return $stepObject;
+	}
+
+	private function createStepMap()
+	{
+		$map = array();
+		foreach($this->groups as $gid => $group) {
+			if ($group['properties']['random']) {
+				$gmap = array();
+				foreach($group['steps'] as $sk => $step) {
+					$gmap[] = $sk;
+				}
+				shuffle($gmap);
+				foreach($gmap as $sk) {
+					$map[] = $sk;
+				} 
+			} else {
+				foreach($group['steps'] as $sk => $step) {
+					$map[] = $sk;
+				}
+			}
+		}
+		return $map;
 	}
 }
