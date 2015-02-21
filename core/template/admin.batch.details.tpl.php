@@ -24,7 +24,32 @@
 
 <h3>Steps</h3>
 <table class="steps">
+<?php $groupStarted = false; ?>
 <?php foreach($groups as $gk => $group): ?>
+	<?php if(count($group['steps']) > 1): ?>
+		<?php $groupStarted = true; ?>
+		<tr class="group">
+			<td class="name" colspan="4"><?= ifset($group['arguments']['name']) ?></td>
+		</tr>
+		<?php if (isset($group['properties'])):
+			ksort($group['properties']);
+			foreach($group['properties'] as $pk => $pv): ?>
+				<tr class="property">
+					<td>&nbsp;</td>
+					<td class="property-key"><?= $pk ?></td>
+					<td class="property-value"><?= formatPropertyValue($pv) ?></td>
+					<td></td>
+				</tr>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	<?php else: ?>
+		<?php if($groupStarted): ?>
+			<tr class="group">
+				<td class="name" colspan="4"></td>
+			</tr>
+		<?php endif; ?>
+		<?php $groupStarted = false; ?>
+	<?php endif; ?>
 	<?php foreach($group['steps'] as $sk => $step):
 		$o = '';
 		$rows = count($step['properties']) + 1;

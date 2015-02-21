@@ -199,6 +199,12 @@ table.steps tr td {
 	padding:7px 15px;
 }
 
+table.steps tr.group td {
+	border-top: 2px solid black;
+	font-size:22px;
+	font-weight:bold;
+}
+
 table.steps .number {
 	font-size:35px;
 	vertical-align: top;
@@ -220,10 +226,6 @@ table.steps tr.property td {
 table.steps .property .property-key {
 	font-weight:bold;
 	padding-left:25px;
-}
-
-table.steps .property .property-key2 {
-	font-style: italic;
 }
 
 table.steps .preview {
