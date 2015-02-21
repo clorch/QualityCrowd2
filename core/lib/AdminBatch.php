@@ -100,7 +100,7 @@ class AdminBatch extends AdminPage
 			$myTpl = new Template('admin.batch.details');
 
 			$myTpl->set('properties', $batch->meta());
-			$myTpl->set('steps', $batch->steps());
+			$myTpl->set('groups', $batch->groups());
 			$myTpl->set('state', $batch->state());
 		}
 

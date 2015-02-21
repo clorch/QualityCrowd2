@@ -50,6 +50,19 @@ class BatchCompiler extends Base
 			),
 
 		// blocks
+		'group' => array(
+			'isBlock' => true,
+			'needsBlock' => true,
+			'minArguments' => 0, 
+			'arguments' => array('name'),
+			'properties' => array(
+				'random' 		 => array(
+					'default' => false, 
+					'values' => 'true, false',
+					'description' => 'Todo'),
+				),
+			'description' => 'TODO',
+			),
 		'step' => array(
 			'isBlock' => true,
 			'needsBlock' => false,
@@ -67,7 +80,6 @@ class BatchCompiler extends Base
 				),
 			'description' => 'TODO',
 			),
-
 
 		// commands inside blocks
 		'title' => array(
@@ -183,14 +195,16 @@ class BatchCompiler extends Base
 
 	public function create()
 	{
-		$defaultQCS = <<<'EOT'
-meta title "New Batch"
+		$defaultQCS = <<<EOT
+meta title "$this->batchId"
 meta description "New batch description"
 
-step
-	title "New Batch"
-	text "Hello World"
-end step
+group
+	step
+		title "New Batch"
+		text "Hello World"
+	end step
+end group
 
 EOT;
 		$path = BATCH_PATH . $this->batchId;
@@ -215,7 +229,10 @@ EOT;
 		if (!file_exists($this->getCacheFileName()) ||
 			filemtime($this->getSourceFileName()) > filemtime($this->getCacheFileName()) ) // || true)
 		{
-			$myBatch = $this->compile();
+			$source = $this->parse();
+			//print_r($source);
+			$bb = new BatchBuilder($this->batchId, $source);
+			$myBatch = $bb->getBatch();
 			$myBatch2 = clone $myBatch;
 			$file = $this->getCacheFileName();
 			file_put_contents($file, serialize($myBatch2));
@@ -225,129 +242,6 @@ EOT;
 			$myBatch = file_get_contents($this->getCacheFileName());
 			$myBatch = unserialize($myBatch);
 		}
-
-		return $myBatch;
-	}
-
-	private function compile() 
-	{
-		$steps = array();
-		$sourceData = $this->parse();
-
-		$meta = array();
-		$properties = array('global' => array(), 'step' => array());
-		$variables = array('global' => array(), 'step' => array());
-
-		$currentScope = 'global';
-
-		foreach($sourceData as $sourceStep) 
-		{
-			switch($sourceStep['command']) 
-			{
-				case 'meta':
-					$meta[$sourceStep['arguments'][0]] = 
-						$this->parseValue($sourceStep['arguments'][1], $variables[$currentScope]);
-					break;
-
-				case 'set':
-					$value = (isset($sourceStep['arguments'][1]) ? $sourceStep['arguments'][1] : true);
-					$properties[$currentScope][$sourceStep['arguments'][0]] = 
-						$this->parseValue($value, $variables[$currentScope]);
-					break;
-
-				case 'var':
-					$variables[$currentScope][$sourceStep['arguments'][0]] = 
-						$this->parseValue($sourceStep['arguments'][1], $variables[$currentScope]);
-					break;
-
-				case 'unset':
-					if ($sourceStep['arguments'][0] == 'all') {
-						$properties[$currentScope] = array();
-					} else
-					{
-						unset($properties[$currentScope][$sourceStep['arguments'][0]]);	
-					}
-					break;
-
-				case 'step':
-					$step = array(
-						'arguments' => array(),
-						'properties' => array(),
-					 	'elements' => array()
-					 	);
-
-					// set properties
-					foreach(self::$syntax['step']['properties'] as $propertyKey => $property)
-					{
-						if (isset($properties['global'][$propertyKey])) {
-							$step['properties'][$propertyKey] = $properties['global'][$propertyKey];
-						} else {
-							$step['properties'][$propertyKey] = $property['default'];
-						}
-					}
-
-					// set arguments
-					$i = 0;
-					foreach($sourceStep['arguments'] as $arg) 
-					{
-						$argumentKey = self::$syntax['step']['arguments'][$i];
-						$step['arguments'][$argumentKey] = $this->parseValue($arg, $variables['global']);
-						$i++;
-					}
-
-					$properties['step'] = $properties['global'];
-					$variables['step'] = $variables['global'];
-					$currentScope = 'step';
-					break;
-
-				case 'end':
-					$steps[] = $step;
-					$currentScope = 'global';
-					break;
-
-				default:
-				
-					$element = array(
-						'command' => $sourceStep['command'],
-						'arguments' => array(),
-						'properties' => array(),
-						);
-
-					// set properties
-					foreach(self::$syntax[$sourceStep['command']]['properties'] as $propertyKey => $property)
-					{
-						if (isset($properties['step'][$propertyKey])) {
-							$element['properties'][$propertyKey] = $properties['step'][$propertyKey];
-						} else {
-							$element['properties'][$propertyKey] = $property['default'];
-						}
-					}
-
-					// set arguments
-					$element['arguments'] = array();
-					$i = 0;
-					foreach($sourceStep['arguments'] as $arg) 
-					{
-						$argumentKey = self::$syntax[$sourceStep['command']]['arguments'][$i];
-						$element['arguments'][$argumentKey] = $this->parseValue($arg, $variables['step']);
-						$i++;
-					}
-
-					$step['elements'][] = $element;
-					
-					break;
-			}
-		}
-
-		// clean up meta properties
-		foreach(self::$syntax['meta']['keys'] as $property => $default)
-		{
-			if (!isset($meta[$property])) {
-				$meta[$property] = $default;
-			}
-		}
-		
-		$myBatch = new Batch($this->batchId, $meta, $steps);
 
 		return $myBatch;
 	}
@@ -524,34 +418,6 @@ EOT;
 		$source = preg_replace('/\ *\n/', "\n", $source);
 
 		return $source;
-	}
-
-	private function parseValue($value, $variables)
-	{
-		// leave ints, bools, etc. untouched
-		if (gettype($value) <> 'string') return $value;
-
-		// resolve variables
-		foreach($variables as $k => $v)
-		{
-			$value = str_replace('$' . $k, $v, $value);
-		}
-
-		// find and resolve includes
-		if (preg_match('/^include\(\s*(.+)\s*\)$/', $value, $matches))
-		{
-			$inc = $matches[1];
-			$inc = str_replace('/', DS, $inc);
-			$inc = str_replace('\\', DS, $inc);
-			
-			$file = BATCH_PATH . $this->batchId . DS . $inc;
-			if (file_exists($file))
-			{
-				$value = file_get_contents($file);
-			}
-		}
-
-		return $value;	
 	}
 
 	private function getSourceFileName()

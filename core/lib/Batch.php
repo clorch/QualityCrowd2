@@ -3,18 +3,18 @@
 class Batch extends Base
 {
 	private $batchId;
-	private $steps;
+	private $groups;
 	private $meta;
 
 	private $state;
 
-	public function __construct($batchId, $meta, $steps) 
+	public function __construct($batchId, $meta, $groups) 
 	{
 		parent::__construct();
 
 		$this->batchId = $batchId;
 		$this->meta = $meta;
-		$this->steps = $steps;
+		$this->groups = $groups;
 
 		$this->state = $this->store->readBatch('state', 'edit', $this->batchId);
 	}
@@ -22,7 +22,7 @@ class Batch extends Base
 	public function __sleep() 
 	{
 		parent::__sleep();
-		return array('batchId', 'steps', 'meta');
+		return array('batchId', 'groups', 'meta');
 	}
 
 	public function __wakeup() 
@@ -61,7 +61,7 @@ class Batch extends Base
 
 	public function countSteps()
 	{
-		return count($this->steps);
+		return count($this->steps());
 	}
 
 	public function meta($key = null)
@@ -73,9 +73,21 @@ class Batch extends Base
 		}
 	}
 
+	public function groups()
+	{
+		return $this->groups;
+	}
+
 	public function steps()
 	{
-		return $this->steps;
+		$steps = array();
+		foreach($this->groups as $group)
+		{
+			foreach($group['steps'] as $sk => $step) {
+				$steps[$sk] = $step;
+			}
+		}
+		return $steps;
 	}
 
 	public function lockingUpdate($workerId)
@@ -300,7 +312,7 @@ class Batch extends Base
 
 	public function getStepObject($stepId, $workerId)
 	{
-		$step = $this->steps[$stepId];
+		$step = $this->steps()[$stepId];
 		$stepObject = new Step($step, $this, $workerId, $stepId);
 		return $stepObject;
 	}
