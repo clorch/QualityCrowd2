@@ -1,38 +1,8 @@
-html, body {
-	font-family: Helvetica, Arial, sans-serif;
-	font-size:13px;
-}
-
-html {
-	margin:0;
-	background-color:#ccc;
-}
-
-body {
-	margin: 20px auto;
-	width:800px;
-	padding:0 15px;
-	background-color:white;
-}
 
 .successmessage {
 	background-color:#77ff77;
 	padding:10px;
 	padding-left:30px;
-}
-
-.header {
-	background-color:#eee;
-	border-bottom: 2px solid #bbb;
-	margin:0 -15px 15px -15px;
-	padding:7px 15px;
-}
-
-.footer {
-	background-color:#eee;
-	border-top: 2px solid #bbb;
-	margin:20px -15px 0 -15px;
-	padding:7px 15px;
 }
 
 pre {
@@ -53,13 +23,7 @@ pre {
 	height:auto;
 }
 
-/* ==================================== Form */
-
-form fieldset {
-	border: 1px dotted #888;
-	margin:15px 0;
-	padding:10px;
-}
+/* ==================================== Forms */
 
 form legend {
 	padding:0 5px;

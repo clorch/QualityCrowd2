@@ -15,16 +15,6 @@ body {
 	background-color:white;
 }
 
-.token {
-	padding:10px;
-	font-size:16px;
-	font-family:monospace;
-	text-align:center;
-	background-color:#ccffcc;
-	width:200px;
-	border:2px solid;
-}
-
 .errormessage {
 	background-color:#ff7777;
 	padding:10px;
@@ -71,7 +61,7 @@ table {
 }
 
 
-/* ========================================= FORMS */
+/* ========================================= Forms */
 
 fieldset {
 	border: 1px dotted #888;
@@ -107,7 +97,7 @@ input[type="text"] {
     padding-right:20px;
 }
 
-/* ========================================= PLAYER */
+/* ========================================= Player */
 
 div.video-box {
 	margin:10px auto;
@@ -182,7 +172,7 @@ video {
 }
 
 
-/* ========================================= SLIDER */
+/* ========================================= Slider */
 
 .slider-area {
 	position:relative;
