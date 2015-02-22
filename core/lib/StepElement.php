@@ -12,7 +12,6 @@ abstract class StepElement extends Base
 
 	abstract protected function init();
 	abstract protected function prepareRender();
-	abstract public function validate(&$data);
 
 	public function __construct($elementArray, Step $step, $uid)
 	{
@@ -35,6 +34,26 @@ abstract class StepElement extends Base
 	public function skip()
 	{
 		return false;
+	}
+
+	// should get overloaded by element classes
+	public function getColumns()
+	{
+		return array();
+	}
+
+	public function validate($data)
+	{
+		return true;
+	}
+
+	public function getResults($data)
+	{
+		$results = array();
+		foreach($this->getColumns() as $col) {
+			$results[$col] = $data[$col];	
+		}
+		return $results;
 	}
 
 	public function render()

@@ -7,7 +7,7 @@
 			<label for="value-<?= $row['value'] ?>-<?= $uid ?>" id="label-<?= $row['value'] ?>-<?= $uid ?>"><?= $row['text'] ?></label>
 		</td>
 		<td>
-			<input type="text" name="value-<?= $row['value'] ?>-<?= $uid ?>" id="value-<?= $row['value'] ?>-<?= $uid ?>" value="">
+			<input type="text" name="text-<?= $row['value'] ?>-<?= $uid ?>" id="value-<?= $row['value'] ?>-<?= $uid ?>" value="">
 		</td>
 	</tr>
 <?php endforeach; ?>

@@ -9,7 +9,7 @@ class ElementQuestion extends StepElement
 		
 	}
 
-	public function validate(&$data) 
+	public function validate($data) 
 	{
 		$msg = array();
 
@@ -18,16 +18,44 @@ class ElementQuestion extends StepElement
 		}
 		
 		if (count($msg) == 0) {
-			unset($data['answered-' . $this->uid]);
 			return true;
 		} else  {
 			return $msg;
 		}
 	}
 
-	protected function prepareRender()
+	public function getColumns()
 	{
-		// parse answers
+		$cols = array();
+
+		switch($this->properties['answermode']) {
+			case 'continous':
+			case 'discrete':
+			$cols[] = 'value-' . $this->uid;
+			$cols[] = 'text-' . $this->uid;
+			break;
+
+			case 'text':
+			$cols[] = 'length-' . $this->uid;
+			$cols[] = 'text-' . $this->uid;
+			break;
+
+			case 'strings':
+			foreach($this->getAnswers() as $answer) {
+				$cols[] = 'text-' . $answer['value'] . '-' . $this->uid;
+			}
+			break;
+
+			default:
+			throw new Exception("Invalid answer mode");
+			break;
+		}
+		
+		return $cols;
+	}
+
+	private function getAnswers()
+	{
 		$answerStr = $this->properties['answers'];
 		$answerStr = explode(';', $answerStr);
 
@@ -41,6 +69,13 @@ class ElementQuestion extends StepElement
 				'text' => trim($str[1]),
 			);
 		}
+
+		return $answers;
+	}
+
+	protected function prepareRender()
+	{
+		$answers = $this->getAnswers();
 
 		// set answer template
 		$answermode = $this->properties['answermode'];

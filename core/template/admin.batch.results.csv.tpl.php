@@ -4,20 +4,13 @@ header('Content-disposition: attachment;filename=' . $batchId . '.csv');
 
 // Header line 1
 echo 'Worker ID,Finished';
-foreach($steps as $stepId => $step)
-{
-	echo ',Step ' . ($stepId + 1);
+foreach($columns as $stepId => $cols) {
+	echo ',Step ' . ($stepId + 1) . ' duration';
+	foreach($cols as $col) {
+		echo ',Step ' . ($stepId + 1) . ' ' . $col;
+	}
 }
 echo "\n";
-
-// Header line 2
-echo ',';
-foreach($steps as $step)
-{
-	echo ',' . ifset($step['arguments']['name']);
-}
-echo "\n";
-
 
 // Results
 foreach($workers as $worker)
@@ -25,18 +18,22 @@ foreach($workers as $worker)
 	echo $worker['workerId'] . ',';
 	echo ($worker['finished'] ? 'Yes' : 'No');
 
-	if (is_array($worker['results'])) {
-		foreach($worker['results'] as $result)
-		{
-			if (isset($result[3])) {
-				echo ',' . $result[3];
-			} else {
-				echo ',-';
-			}
+	if (!is_array($worker['results'])) {
+		echo "\n";
+		continue;
+	}
+
+	foreach($worker['results'] as $sk => $result)
+	{
+		array_shift($result); // step id
+		array_shift($result); // timestamp
+
+		echo ',' . $worker['durations'][$sk];  //duration
+
+		foreach($result as $value) {
+			echo ',' . $value; 
 		}
 	}
 
 	echo "\n";
 }
-
-?>

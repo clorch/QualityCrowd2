@@ -20,7 +20,7 @@ class ElementQualification extends StepElement
 		return $done;
 	}
 
-	public function validate(&$data) 
+	public function validate($data) 
 	{
 		if (!isset($this->qualiMain)) return true;
 

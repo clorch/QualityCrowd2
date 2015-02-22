@@ -6,10 +6,15 @@ class ElementImage extends StepElement
 	{
 		
 	}
-
-	public function validate(&$data) 
+	
+	public function getResults($data)
 	{
-		return true;
+		return array('image-' . $this->uid => $this->arguments['image']);
+	}
+
+	public function getColumns()
+	{
+		return array('image-' . $this->uid);
 	}
 
 	protected function prepareRender()

@@ -206,6 +206,8 @@ class Batch extends Base
 					usort($results, function($a, $b) {
 					    return $a[0] - $b[0];
 					});
+				} else {
+					$results = array();
 				}
 
 				$workers[$wid]['durations'] = $durations;
@@ -223,13 +225,14 @@ class Batch extends Base
 
 		foreach($workers as $wid => $w)
 		{	
+			// skip workers without result data
 			if (!is_array($w['results'])) continue;
 
 			foreach($w['results'] as $stepResults)
 			{			
 				$stepId = $stepResults[0];
-				array_shift($stepResults);
-				array_shift($stepResults);
+				array_shift($stepResults); // step id
+				array_shift($stepResults); // timestamp
 				$steps[$stepId]['results'][$wid] = $stepResults;
 			}
 
@@ -351,5 +354,16 @@ class Batch extends Base
 			}
 		}
 		return $map;
+	}
+
+	public function getColumns()
+	{
+		$columns = array();
+		foreach($this->steps() as $sk => $step) {
+			$step = $this->steps()[$sk];
+			$stepObject = new Step($step, $this, 'WID', $sk);
+			$columns[$sk] = $stepObject->getColumns();
+		}
+		return $columns;
 	}
 }

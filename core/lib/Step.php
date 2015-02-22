@@ -33,16 +33,18 @@ class Step extends Base
 		return $this->workerId;
 	}
 
+	private function getElement($element, $ek)
+	{
+		$uid = hash("crc32b", $this->batch->id() . '-' . $this->stepId . '-' . $ek);
+		$class = 'Element' . ucfirst($element['command']);
+		return new $class($element, $this, $uid);
+	}
+
 	// return true if this step should be skipped
 	public function skip()
 	{
-		foreach($this->elements as $ek => $element) 
-		{
-			$uid = hash("crc32b", $this->batch->id() . '-' . $this->stepId . '-' . $ek);
-
-			$class = 'Element' . ucfirst($element['command']);
-			$elementObject = new $class($element, $this, $uid);
-
+		foreach($this->elements as $ek => $element) {
+			$elementObject = $this->getElement($element, $ek);
 			if (! $elementObject->skip()) return false;
 		}
 
@@ -57,13 +59,8 @@ class Step extends Base
 
 		$elementRenderings = array();
 		
-		foreach($this->elements as $ek => $element) 
-		{
-			$uid = hash("crc32b", $this->batch->id() . '-' . $this->stepId . '-' . $ek);
-
-			$class = 'Element' . ucfirst($element['command']);
-			$elementObject = new $class($element, $this, $uid);
-
+		foreach($this->elements as $ek => $element) {
+			$elementObject = $this->getElement($element, $ek);
 			$elementRenderings[] = $elementObject->render();
 		}
 
@@ -79,11 +76,7 @@ class Step extends Base
 
 		foreach($this->elements as $ek => $element) 
 		{
-			$uid = hash("crc32b", $this->batch->id() . '-' . $this->stepId . '-' . $ek);
-
-			$class = 'Element' . ucfirst($element['command']);
-			$elementObject = new $class($element, $this, $uid);
-
+			$elementObject = $this->getElement($element, $ek);
 			$msg = $elementObject->validate($data);
 
 			if ($msg === false) {
@@ -99,9 +92,27 @@ class Step extends Base
 
 	public function save($data)
 	{
-		$data = array('timestamp' => time()) + $data;
-		$data = array('stepId' => $this->stepId) + $data;
+		$results = array(
+				'stepId' => $this->stepId, 
+				'timestamp' => time());
 
-		$this->store->writeWorkerCSV('results', array($data), $this->batch->id(), $this->workerId);
+		foreach($this->elements as $ek => $element) {
+			$elementObject = $this->getElement($element, $ek);
+			$results = array_merge($results, $elementObject->getResults($data));
+		}
+
+		$this->store->writeWorkerCSV('results', array($results), $this->batch->id(), $this->workerId);
+	}
+
+	public function getColumns()
+	{
+		$columns = array();
+
+		foreach($this->elements as $ek => $element) {
+			$elementObject = $this->getElement($element, $ek);
+			$columns = array_merge($columns, $elementObject->getColumns());
+		}
+
+		return $columns;
 	}
 }

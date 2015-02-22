@@ -7,7 +7,7 @@ class ElementVideo extends StepElement
 		
 	}
 
-	public function validate(&$data) 
+	public function validate($data)
 	{
 		$msg = array();
 		
@@ -16,12 +16,32 @@ class ElementVideo extends StepElement
 		}
 
 		if (count($msg) == 0) {
-			unset($data['watched-' . $this->uid]);
-			$data['media-' . $this->uid] = (isset($this->arguments['video1']) ? $this->arguments['video1'] : null);
 			return true;
 		} else {
 			return $msg;
 		}
+	}
+
+	public function getResults($data)
+	{
+		$results = array();
+		$i = 0;
+		foreach ($this->arguments as $video) {
+			$results['video' . $i . '-' . $this->uid] = $video;
+			$i++;
+		}
+		return $results;
+	}
+
+	public function getColumns()
+	{
+		$cols = array();
+		$i = 0;
+		foreach ($this->arguments as $video) {
+			$cols[] = 'video' . $i . '-' . $this->uid;
+			$i++;
+		}
+		return $cols;
 	}
 
 	protected function prepareRender()
