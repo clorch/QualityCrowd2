@@ -69,7 +69,6 @@ class AdminBatch extends AdminPage
 			case 'results.xlsx':
 				$myTpl = new Template('admin.batch.results.xlsx');
 				$myTpl->set('batchId', $batchId);
-				$myTpl->set('steps', $batch->steps());
 				$myTpl->set('columns', $batch->getColumns());
 				$myTpl->set('workers', $batch->workers(true));
 				echo $myTpl->render();

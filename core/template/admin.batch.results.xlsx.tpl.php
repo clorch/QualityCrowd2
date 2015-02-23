@@ -11,21 +11,13 @@ $objPHPExcel->getProperties()->setCreator("QualityCrowd 2")
 							 ->setDescription("QualityCrowd 2 results for $batchId");
 
 // fill in results
-outputHeaders($objPHPExcel->getSheet(0), $steps);
-outputResults($objPHPExcel->getSheet(0), $workers, 2);
+outputResults($objPHPExcel->getSheet(0), $columns, $workers);
 $objPHPExcel->getSheet(0)->setTitle('results');
-
-// fill in text results
-$objPHPExcel->createSheet();
-outputHeaders($objPHPExcel->getSheet(1), $steps);
-outputResults($objPHPExcel->getSheet(1), $workers, 3);
-$objPHPExcel->getSheet(1)->setTitle('text results');
 
 // fill in durations
 $objPHPExcel->createSheet();
-outputHeaders($objPHPExcel->getSheet(2), $steps);
-outputDurations($objPHPExcel->getSheet(2), $workers);
-$objPHPExcel->getSheet(2)->setTitle('durations');
+outputDurations($objPHPExcel->getSheet(1), $columns, $workers);
+$objPHPExcel->getSheet(1)->setTitle('durations');
 
 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
 $objPHPExcel->setActiveSheetIndex(0);
@@ -39,31 +31,21 @@ $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 $objWriter->save('php://output');
 
 
-
-function outputHeaders($sheet, $steps)
+function outputResults($sheet, $columns, $workers)
 {
-	// Header line 1
+	// Header
 	$sheet->setCellValue('A1', 'Worker ID')
-        ->setCellValue('B1', 'Finished');
-
+          ->setCellValue('B1', 'Finished');
 	$c = 2;
-	foreach($steps as $stepId => $step)
-	{
-	    $sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
-	    $c++;
+	foreach($columns as $stepId => $cols) {
+		foreach($cols as $col) {
+			$sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
+			$sheet->setCellValueByColumnAndRow($c, 2, $col);
+	    	$c++;
+		}
 	}
 
-	// Header line 2
-	$c = 2;
-	foreach($steps as $step)
-	{
-		$sheet->setCellValueByColumnAndRow($c, 2, ifset($step['arguments']['name']));
-	    $c++;
-	}
-}
-
-function outputResults($sheet, $workers, $colId)
-{
+	// Data
 	$r = 4;
 	foreach($workers as $worker)
 	{
@@ -71,15 +53,18 @@ function outputResults($sheet, $workers, $colId)
 			PHPExcel_Cell_DataType::TYPE_STRING);
 	    $sheet->setCellValueByColumnAndRow(1, $r, ($worker['finished'] ? 'Yes' : 'No'));
 
-		if (is_array($worker['results'])) {
-			$c = 2;
-			foreach($worker['results'] as $result)
-			{
-				if (isset($result[$colId])) {
-					$sheet->setCellValueByColumnAndRow($c, $r, $result[$colId]);
-				} else {
-					$sheet->setCellValueByColumnAndRow($c, $r, '-');
-				}
+		if (!is_array($worker['results'])) {
+			continue;
+		}
+
+		$c = 2;
+		foreach($worker['results'] as $result)
+		{
+			array_shift($result); // step id
+			array_shift($result); // timestamp
+
+			foreach($result as $value) {
+				$sheet->setCellValueByColumnAndRow($c, $r, $value);
 				$c++;
 			}
 		}
@@ -88,9 +73,21 @@ function outputResults($sheet, $workers, $colId)
 	}
 }
 
-function outputDurations($sheet, $workers)
+function outputDurations($sheet, $columns, $workers)
 {
-	$r = 4;
+	// Header
+	$sheet->setCellValue('A1', 'Worker ID')
+          ->setCellValue('B1', 'Finished');
+
+	$c = 2;
+	foreach($columns as $stepId => $cols) {
+		
+		$sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
+    	$c++;
+	}
+
+	// Data
+	$r = 3;
 	foreach($workers as $worker)
 	{
 		$sheet->setCellValueExplicitByColumnAndRow(0, $r, $worker['workerId'],
