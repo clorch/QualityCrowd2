@@ -182,7 +182,8 @@ class Batch extends Base
 	    	$wid = preg_replace('#'.DSX.'$#', '', $file);
 
 	    	$meta = $store->readWorker('meta', null, $this->batchId, $wid);
-	    	$meta['stepId'] = $store->readWorker('stepId', null, $this->batchId, $wid);
+			$map = $store->readWorker('stepMap', null, $this->batchId, $wid);
+	    	$meta['stepId'] = $map[$store->readWorker('stepNum', null, $this->batchId, $wid)];
     		$meta['finished'] = ($meta['stepId'] == $this->countSteps() - 1);
     		$workers[$wid] = $meta;
 
@@ -196,7 +197,7 @@ class Batch extends Base
 	    			$lastTimestamp = $meta['timestamp'];
 					foreach($results as $stepId => &$stepResults)
 					{
-						$durations[$stepId] = $stepResults[1] - $lastTimestamp;
+						$durations[$map[$stepId]] = $stepResults[1] - $lastTimestamp;
 						$lastTimestamp = $stepResults[1];
 					}
 				}
@@ -221,7 +222,8 @@ class Batch extends Base
 	public function resultsPerStep()
 	{
 		$workers = $this->workers(true);
-		$steps = array();
+		$steps = [];
+		$columns = $this->getColumns();
 
 		foreach($workers as $wid => $w)
 		{	
@@ -233,7 +235,13 @@ class Batch extends Base
 				$stepId = $stepResults[0];
 				array_shift($stepResults); // step id
 				array_shift($stepResults); // timestamp
-				$steps[$stepId]['results'][$wid] = $stepResults;
+				$colId = 0;
+				foreach($columns[$stepId] as $col) {
+					if (strpos($col, 'value') === 0) {
+						$steps[$stepId]['results'][$col][$wid]= $stepResults[$colId];
+					}
+					$colId++;
+				}
 			}
 
 			foreach($w['durations'] as $stepId => $duration)
@@ -256,70 +264,92 @@ class Batch extends Base
 				$sum += $duration;
 			}
 
-			$step['duration-avg'] = $sum / count($step['durations']);
-			$step['duration-max'] = $max;
-			$step['duration-min'] = $min;
+			$step['duration-stats']['mean'] = $sum / count($step['durations']);
+			$step['duration-stats']['max'] = $max;
+			$step['duration-stats']['min'] = $min;
+
+			if(!isset($step['results'])) {
+				$step['results'] = [];
+			}
 		}
 
 		// consolidate results part 1 - average, min, max
 		foreach($steps as $stepId => &$step)
 		{
-			$sum = 0;
-			$max = -0xffffffff;
-			$min = 0xffffffff;
-			$cnt = 0;
+			$sum = [];
+			$max = [];
+			$min = [];
+			$cnt = [];
 
-			foreach($step['results'] as $wid => $result)
+			foreach($step['results'] as $key => $result)
 			{
 				if (count($result) == 0) continue;
 
-				$value = $result[0];
-				if (!is_numeric($value)) continue;
+				foreach($result as $wid => $value) {
+					if (!is_numeric($value)) continue;
+				
+					if (!isset($sum[$key])) {
+						$sum[$key] = 0;
+						$max[$key] = -0xffffffff;
+						$min[$key] = 0xffffffff;
+						$cnt[$key] = 0;
+					}
 
-				if ($value > $max) $max = $value;
-				if ($value < $min) $min = $value;
-				$sum += $value;
-				$cnt ++;
+					if ($value > $max[$key]) $max[$key] = $value;
+					if ($value < $min[$key]) $min[$key] = $value;
+					$sum[$key] += $value;
+					$cnt[$key] ++;
+				}
 			}
 
-			$step['results-cnt'] = $cnt;
-			if ($cnt > 0) {
-				$step['results-avg'] = $sum / $cnt;
-				$step['results-max'] = $max;
-				$step['results-min'] = $min;
-			} else {
-				$step['results-avg'] = null;
-				$step['results-max'] = null;
-				$step['results-min'] = null;
+			foreach($sum as $key => $_) {
+				if ($cnt > 0) {
+					$step['result-stats']['mean'][$key] = $sum[$key] / $cnt[$key];
+					$step['result-stats']['max'][$key] = $max[$key];
+					$step['result-stats']['min'][$key] = $min[$key];
+				} else {
+					$step['result-stats']['mean'][$key] = null;
+					$step['result-stats']['max'][$key] = null;
+					$step['result-stats']['min'][$key] = null;
+				}
 			}
 
-			$step['workers'] = count($step['results']);
+			$step['workers'] = count($step['durations']);
 		}
 
 		// consolidate results part 2 - standard deviation
 		foreach($steps as $stepId => &$step)
 		{
-			$sd = 0;
+			$sd = [];
 
-			foreach($step['results'] as $wid => $result)
+			foreach($step['results'] as $key => $result)
 			{
 				if (count($result) == 0) continue;
 
-				$value = $result[0];
-				$sd += ($step['results-avg'] - $value) * ($step['results-avg'] - $value);
+				foreach($result as $wid => $value) {
+					$mean = $step['result-stats']['mean'][$key];
+					if (!isset($sd[$key])) {
+						$sd[$key] = 0;
+					}
+					$sd[$key] += ($mean - $value) * ($mean - $value);
+				}
 			}
 
-			if ($step['workers'] > 1) {
-				$step['results-sd'] = sqrt($sd / ($step['workers'] - 1));
-			} else {
-				$step['results-sd'] = 0;
+			foreach($sd as $key => $s) {
+				if ($step['workers'] > 1) {
+					$step['result-stats']['sd'][$key] = sqrt($s / ($step['workers'] - 1));
+				} else {
+					$step['result-stats']['sd'][$key] = 0;
+				}
 			}
 		}
+
+		ksort($steps);
 
 		return $steps;
 	}
 
-	public function getStepObject($stepId, $workerId)
+	public function getStepObject($stepNum, $workerId)
 	{
 		$store = new DataStore();
 		$map = $store->readWorker('stepMap', null, $this->batchId, $workerId);
@@ -329,8 +359,9 @@ class Batch extends Base
 			$store->writeWorker('stepMap', $map, $this->batchId, $workerId);
 		}
 
-		$step = $this->steps()[$map[$stepId]];
-		$stepObject = new Step($step, $this, $workerId, $map[$stepId]);
+		$stepId = $map[$stepNum];
+		$step = $this->steps()[$stepId];
+		$stepObject = new Step($step, $this, $workerId, $stepId);
 		return $stepObject;
 	}
 

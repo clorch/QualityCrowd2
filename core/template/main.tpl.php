@@ -13,13 +13,13 @@
 	</head>
 	<body>
 		<div class="header">
-			<span class="step">Step <?= ($stepId+1) ?> of <?= $stepCount ?></span>
+			<span class="step">Step <?= ($stepNum+1) ?> of <?= $stepCount ?></span>
 
 			<?php if($state == 'edit'): ?>
 			<span class="debugmessage">PREVIEW MODE, all data will be deleted</span>
 			<?php endif; ?>
 
-			<?php if($isLocked && $stepId < $stepCount - 1 && $timeout > 0): ?>
+			<?php if($isLocked && $stepNum < $stepCount - 1 && $timeout > 0): ?>
 			<span id="timeout">Remaining time to finish this step: <?= formatTime($timeout) ?></span>
 			<?php endif; ?>
 		</div>
@@ -33,13 +33,13 @@
 		<?php endif; ?>
 
 		<form action="<?= BASE_URL.$batchId.'/'.$workerId ?>" method="post" id="stepform">
-			<input type="hidden" name="stepId-<?= $scope ?>" value="<?= $stepId ?>">
+			<input type="hidden" name="stepNum-<?= $scope ?>" value="<?= $stepNum ?>">
 			<?= $content ?>
 		</form>
 
 		<div class="footer">
-			<?php if ($stepId + 1 < $stepCount && $state <> 'post' && $isLocked): ?>
-				<button id="button_next"><?= ($stepId == 0 ? "Start" : "Next") ?></button>
+			<?php if ($stepNum + 1 < $stepCount && $state <> 'post' && $isLocked): ?>
+				<button id="button_next"><?= ($stepNum == 0 ? "Start" : "Next") ?></button>
 			<?php endif; ?>
 
 			<img src="<?= BASE_URL?>core/files/img/loading.gif" class="acitvityspinner" style="display:none;">
@@ -50,7 +50,7 @@
 			</span>
 			<?php endif; ?>
 
-			<?php if(!$isLocked && $stepId < $stepCount - 1): ?>
+			<?php if(!$isLocked && $stepNum < $stepCount - 1): ?>
 			<span class="debugmessage">
 				There are currently working enough people on this job. Try again later.
 			</span>
@@ -58,7 +58,7 @@
 		</div>
 
 		<script type="text/javascript">
-			<?php if ($stepId + 1 < $stepCount && $state <> 'post' && $isLocked): ?>
+			<?php if ($stepNum + 1 < $stepCount && $state <> 'post' && $isLocked): ?>
 			$('#button_next').click(function() {
 				<?php if (isset($delay) && $delay > 0): ?>
 				$('#button_next').attr("disabled", true);
@@ -72,7 +72,7 @@
 			});
 			<?php endif; ?>
 
-			<?php if($isLocked && $stepId < $stepCount - 1 && $timeout > 0): ?>
+			<?php if($isLocked && $stepNum < $stepCount - 1 && $timeout > 0): ?>
 			var remainingTime = <?= $timeout ?>;
 			var timer = window.setInterval(function () 
 			{	

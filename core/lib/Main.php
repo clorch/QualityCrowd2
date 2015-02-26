@@ -8,7 +8,7 @@ class Main extends Base
 
 	private $batchId;
 	private $workerId;
-	private $lastStepId;
+	private $lastStepNum;
 	private $refreshStep = false;
 
 	public function __construct($batchId, $workerId, $scope = 'main', $restart = false)
@@ -41,12 +41,12 @@ class Main extends Base
 	public function render()
 	{
 		// read last step id
-		$this->lastStepId = $this->store->readWorker('stepId', -1, $this->batchId, $this->workerId);
+		$this->lastStepNum = $this->store->readWorker('stepNum', -1, $this->batchId, $this->workerId);
 
 		// fresh start
-		if ($this->lastStepId == -1) {
+		if ($this->lastStepNum == -1) {
 			$this->batch->init($this->workerId);
-			$this->lastStepId = 0;
+			$this->lastStepNum = 0;
 		}
 
 		// process submitted post data
@@ -58,31 +58,31 @@ class Main extends Base
 		}
 
 		// calculate current step id
-		$stepId = $this->lastStepId;
-		if (!$this->refreshStep) $stepId++;
+		$stepNum = $this->lastStepNum;
+		if (!$this->refreshStep) $stepNum++;
 
-		while($stepId < $this->batch->countSteps()) {
-			$step = $this->batch->getStepObject($stepId, $this->workerId);
+		while($stepNum < $this->batch->countSteps()) {
+			$step = $this->batch->getStepObject($stepNum, $this->workerId);
 			if ($step->skip()) {
-				$stepId++;
+				$stepNum++;
 			} else {
 				break;
 			}
 		}
 	
-		if ($stepId < 0) $stepId = 0;
-		if ($stepId >= $this->batch->countSteps()) $stepId = $this->batch->countSteps() - 1;
+		if ($stepNum < 0) $stepNum = 0;
+		if ($stepNum >= $this->batch->countSteps()) $stepNum = $this->batch->countSteps() - 1;
 
-		$this->store->writeWorker('stepId', $stepId, $this->batchId, $this->workerId);
+		$this->store->writeWorker('stepNum', $stepNum, $this->batchId, $this->workerId);
 
 		// handle last step
-		if ($stepId == $this->batch->countSteps() - 1) {
+		if ($stepNum == $this->batch->countSteps() - 1) {
 			$this->batch->lockingFinish($this->workerId);
 			$this->store->writeWorker('done', true, $this->batchId, $this->workerId);
 		}
 
 		// set variables
-		$this->tpl->set('stepId', $stepId);
+		$this->tpl->set('stepNum', $stepNum);
 		$this->tpl->set('stepCount', $this->batch->countSteps());
 		$this->tpl->set('state', $this->batch->state());
 		$this->tpl->set('isLocked', $this->batch->lockingUpdate($this->workerId));
@@ -99,31 +99,31 @@ class Main extends Base
 	{
 		$msg = '';
 		
-		if (!isset($_POST['stepId-' . $this->scope]))
+		if (!isset($_POST['stepNum-' . $this->scope]))
 		{
-			if ($this->lastStepId < 0) return;
+			if ($this->lastStepNum < 0) return;
 			// user hit "reload" in his browser, changed the browser, ...
 			$this->refreshStep = true;
 
 		} else {
-			if (!is_numeric($_POST['stepId-' . $this->scope]))
+			if (!is_numeric($_POST['stepNum-' . $this->scope]))
 			{
 				$msg = array('invalid form data submitted');
 				$this->refreshStep = true;
 			}
 
-			$stepId = $_POST['stepId-' . $this->scope];
-			settype($stepId, 'int');
+			$stepNum = $_POST['stepNum-' . $this->scope];
+			settype($stepNum, 'int');
 
 			$data = $_POST;
-			unset($data['stepId-' . $this->scope]);
+			unset($data['stepNum-' . $this->scope]);
 
-			if ($stepId <> $this->lastStepId) {
+			if ($stepNum <> $this->lastStepNum) {
 				// user hit "reload" in his browser and sent the post data again
 				$this->refreshStep = true;
 			} else {
 				// validate answer data
-				$step = $this->batch->getStepObject($stepId, $this->workerId);
+				$step = $this->batch->getStepObject($stepNum, $this->workerId);
 				$msg = $step->validate($data);
 
 				// save answer data if valid

@@ -179,8 +179,16 @@ table.steps .command {
 	font-weight:bold;
 }
 
-table.steps tr.property {
+table.steps tr.property td {
 	border-bottom: 1px dotted #888;
+}
+
+table.steps tr.property td.empty {
+	border-bottom:none;
+}
+
+table.steps tr.property td.last {
+	border-bottom:1px solid #888;
 }
 
 table.steps tr.property td {
@@ -190,6 +198,10 @@ table.steps tr.property td {
 table.steps .property .property-key {
 	font-weight:bold;
 	padding-left:25px;
+}
+
+table.steps .property .property-key2 {
+	font-style: italic;
 }
 
 table.steps .preview {

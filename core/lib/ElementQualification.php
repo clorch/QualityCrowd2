@@ -23,8 +23,12 @@ class ElementQualification extends StepElement
 	public function validate($data) 
 	{
 		if (!isset($this->qualiMain)) return true;
+		
+		$qualiStepNum = $data['stepNum-qualification-main'];
 
-		$qualiStepId = $data['stepId-qualification-main'];
+		$store = new DataStore();
+		$map = $store->readWorker('stepMap', null, $this->arguments['qualification-batch'], $this->step->workerId());
+		$qualiStepId = $map[$qualiStepNum];
 
 		if ($this->qualiMain->getBatch()->countSteps() == $qualiStepId + 1) {
 			return true;

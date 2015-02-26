@@ -62,58 +62,60 @@ $graph->Stroke(TMP_PATH.'img-cache'.DS.'workers-'.$id.'.png');
  */
 foreach($results as $stepId => &$step)
 {
-	if ($step['results-cnt'] == 0) continue;
-	// prepare graph
-	$dataY = array();
+	foreach($step['results'] as $key => &$values) {
+		if (count($values) == 0) continue;
+		// prepare graph
+		$dataY = [];
 
-	foreach($step['results'] as $wid => &$result)
-	{
-		if (is_numeric($result[0])) {
-			$dataY[] = $result[0];
+		foreach($values as $wid => &$value)
+		{
+			if (is_numeric($value)) {
+				$dataY[] = $value;
+			}
 		}
+
+		if (count($dataY) == 0) continue;
+
+		// setup the graph
+		$graph = new Graph(350,120);
+		$graph->SetScale("textint");
+
+		$theme_class = new UniversalTheme;
+
+		$graph->SetTheme($theme_class);
+		$graph->img->SetAntiAliasing(true);
+		$graph->SetBox(false);
+		$graph->SetMargin(50,5,15,15);
+
+		$graph->xaxis->HideLabels();
+
+		$graph->yaxis->HideLine(false);
+		$graph->yaxis->HideTicks(false, false);
+
+		// plot bars
+		$p1 = new BarPlot($dataY);
+		$graph->Add($p1);
+		$p1->SetColor("olivedrab3");
+		$p1->SetFillGradient('olivedrab1','olivedrab4',GRAD_VERT);
+
+		$pAvg = new PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key], '#000000', 1);
+		$graph->Add($pAvg);
+
+		$pMin = new PlotLine(HORIZONTAL, $step['result-stats']['min'][$key], '#008800', 1);
+		$graph->Add($pMin);
+
+		$pMax = new PlotLine(HORIZONTAL, $step['result-stats']['max'][$key], '#ff0000', 1);
+		$graph->Add($pMax);
+
+		$pSd1 = new PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key] + $step['result-stats']['sd'][$key] / 2, '#0000ff', 1);
+		$graph->Add($pSd1);
+
+		$pSd2 = new PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key] - $step['result-stats']['sd'][$key] / 2, '#0000ff', 1);
+		$graph->Add($pSd2);
+
+		// output graph to temp file
+		$graph->Stroke(TMP_PATH.'img-cache'.DS.'results-'.$id.'-'.$stepId.'-'.$key.'.png');
 	}
-
-	if (count($dataY) == 0) continue;
-
-	// setup the graph
-	$graph = new Graph(400,180);
-	$graph->SetScale("textint");
-
-	$theme_class = new UniversalTheme;
-
-	$graph->SetTheme($theme_class);
-	$graph->img->SetAntiAliasing(true);
-	$graph->SetBox(false);
-	$graph->SetMargin(50,5,15,15);
-
-	$graph->xaxis->HideLabels();
-
-	$graph->yaxis->HideLine(false);
-	$graph->yaxis->HideTicks(false, false);
-
-	// plot bars
-	$p1 = new BarPlot($dataY);
-	$graph->Add($p1);
-	$p1->SetColor("olivedrab3");
-	$p1->SetFillGradient('olivedrab1','olivedrab4',GRAD_VERT);
-
-	$pAvg = new PlotLine(HORIZONTAL, $step['results-avg'], '#000000', 1);
-	$graph->Add($pAvg);
-
-	$pMin = new PlotLine(HORIZONTAL, $step['results-min'], '#008800', 1);
-	$graph->Add($pMin);
-
-	$pMax = new PlotLine(HORIZONTAL, $step['results-max'], '#ff0000', 1);
-	$graph->Add($pMax);
-
-	$pSd1 = new PlotLine(HORIZONTAL, $step['results-avg'] + $step['results-sd'] / 2, '#0000ff', 1);
-	$graph->Add($pSd1);
-
-	$pSd2 = new PlotLine(HORIZONTAL, $step['results-avg'] - $step['results-sd'] / 2, '#0000ff', 1);
-	$graph->Add($pSd2);
-
-	// output graph to temp file
-	$graph->Stroke(TMP_PATH.'img-cache'.DS.'results-'.$id.'-' . $stepId .'.png');
 }
 
 ?>
@@ -129,13 +131,27 @@ foreach($results as $stepId => &$step)
 
 <img src="<?= BASE_URL.'core/tmp/img-cache/workers-'.$id.'.png' ?>">
 
-<h3>Consolidated Results</h3>
-<p>Note: Only the first question of each step is shown. Download results for complete data.</p>
+<h3>Result Statistics</h3>
+
 <table class="steps">
 
-<?php foreach($results as $stepId => &$step): 
+<?php 
+$questions = array();
+foreach($steps as $stepId => &$step) {
+	if (!isset($step['elements'])) continue;
+	foreach($step['elements'] as $element) {
+		if ($element['command'] != 'question') continue;
+		$questions[$stepId][] = $element;
+	}
+}
+
+foreach($results as $stepId => &$step): 
 	$rows = 5;
-	if ($step['results-cnt'] > 0) $rows += 4;
+	foreach($columns[$stepId] as $col) {
+		if (strpos($col, 'value') === 0) {
+			$rows += 5;
+		}
+	}
 ?>
 	<tr class="step">
 		<td class="number" rowspan="<?= $rows ?>"><?= ($stepId + 1) ?></td>
@@ -143,47 +159,60 @@ foreach($results as $stepId => &$step)
 	</tr>
 	
 	<tr class="property">
-		<td class="property-key" colspan="2">workers</td>
-		<td class="property-value"><?= $step['workers'] ?></td>
-		<td rowspan="<?= ($rows - 1)?>">
-			<?php if ($step['results-cnt'] > 0): ?>
-			<img src="<?= BASE_URL.'core/tmp/img-cache/results-'.$id.'-'.$stepId.'.png' ?>">
-			<?php endif; ?>
-		</td>
+		<td class="property-key last" colspan="2">workers</td>
+		<td class="property-value last"><?= $step['workers'] ?></td>
+		<td class="empty"></td>
 	</tr>
 
 	<tr class="property">
-		<td class="property-key" rowspan="3">duration</td>
+		<td class="property-key last" rowspan="3">duration</td>
 		<td class="property-key2">average</td>
-		<td class="property-value"><?= formatTime($step['duration-avg']) ?></td>
+		<td class="property-value"><?= formatTime($step['duration-stats']['mean']) ?></td>
+		<td class="empty"></td>
 	</tr>
 	<tr class="property">
 		<td class="property-key2">maximum</td>
-		<td class="property-value"><?= formatTime($step['duration-max']) ?></td>
+		<td class="property-value"><?= formatTime($step['duration-stats']['max']) ?></td>
+		<td class="empty"></td>
 	</tr>
 	<tr class="property">
-		<td class="property-key2">minimum</td>
-		<td class="property-value"><?= formatTime($step['duration-min']) ?></td>
+		<td class="property-key2 last">minimum</td>
+		<td class="property-value last"><?= formatTime($step['duration-stats']['min']) ?></td>
+		<td class="last"></td>
 	</tr>
 
-	<?php if ($step['results-cnt'] > 0): ?>
-	<tr class="property">
-		<td class="property-key" rowspan="4">result</td>
-		<td class="property-key2">average</td>
-		<td class="property-value"><?= round($step['results-avg'], 1) ?></td>
-	</tr>
-	<tr class="property">
-		<td class="property-key2" style="color:blue;">standard deviation</td>
-		<td class="property-value"><?= round($step['results-sd'], 1) ?></td>
-	</tr>
-	<tr class="property">
-		<td class="property-key2" style="color:red;">maximum</td>
-		<td class="property-value"><?= $step['results-max'] ?></td>
-	</tr>
-	<tr class="property">
-		<td class="property-key2" style="color:#008800;">minimum</td>
-		<td class="property-value"><?= $step['results-min'] ?></td>
-	</tr>
+	<?php if (count($step['results']) > 0): ?>
+		<?php 
+		$colId = -1;
+		foreach($step['result-stats']['mean'] as $col => $_):
+			if (strpos($col, 'value') !== 0) continue;
+			$colId++;
+			?>
+			<tr class="property">
+				<td class="property-key" rowspan="5">result</td>
+				<td class="property-key2">question</td>
+				<td class="property-value"><?= $questions[$stepId][$colId]['arguments']['question'] ?></td>
+				<td rowspan="5" class="last">
+					<img src="<?= BASE_URL.'core/tmp/img-cache/results-'.$id.'-'.$stepId.'-'.$col.'.png' ?>">
+				</td>
+			</tr>
+			<tr class="property">
+				<td class="property-key2">average</td>
+				<td class="property-value"><?= round($step['result-stats']['mean'][$col], 1) ?></td>
+			</tr>
+			<tr class="property">
+				<td class="property-key2" style="color:blue;">std. dev.</td>
+				<td class="property-value"><?= round($step['result-stats']['sd'][$col], 1) ?></td>
+			</tr>
+			<tr class="property">
+				<td class="property-key2" style="color:red;">maximum</td>
+				<td class="property-value"><?= $step['result-stats']['max'][$col] ?></td>
+			</tr>
+			<tr class="property">
+				<td class="property-key2 last" style="color:#008800;">minimum</td>
+				<td class="property-value last"><?= $step['result-stats']['min'][$col] ?></td>
+			</tr>
+		<?php endforeach; ?>
 	<?php endif; ?>
 <?php endforeach; ?>
 </table>
