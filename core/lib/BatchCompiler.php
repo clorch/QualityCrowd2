@@ -81,7 +81,7 @@ class BatchCompiler extends Base
 			'description' => 'TODO',
 			),
 
-		// commands inside blocks
+		// commands inside blocks, step elements
 		'title' => array(
 			'isBlock' => false,
 			'needsBlock' => true,
@@ -140,7 +140,7 @@ class BatchCompiler extends Base
 			'properties'   => array(
 				'answermode'	 => array(
 					'default' => 'discrete', 
-					'values' => 'continous, discrete, strings, text',
+					'values' => 'continous, discrete, strings, text, decisions',
 					'description' => 'Todo'),
 				'answers'		 => array(
 					'default' => '1: First answer; 2: Second answer; 3: Third answer', 

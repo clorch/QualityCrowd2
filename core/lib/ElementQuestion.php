@@ -44,6 +44,14 @@ class ElementQuestion extends StepElement
 			foreach($this->getAnswers() as $answer) {
 				$cols[] = 'text-' . $answer['value'] . '-' . $this->uid;
 			}
+
+			case 'decisions':
+			$i = 0;
+			foreach($this->getAnswers() as $answer) {
+				$cols[] = 'decision-' . $i . '-' . $this->uid;
+				$cols[] = 'timing-' . $i . '-' . $this->uid;
+				$i++;
+			}
 			break;
 
 			default:
