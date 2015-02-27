@@ -100,11 +100,10 @@ class Request extends Base
 
 	private function auth($username, $password)
 	{
-		$salt = $this->getConfig('securitySalt');
 		$users = $this->getConfig('adminUsers');
 		$hash = $users[$username];
 
-		if ($hash == sha1($password . $salt))
+		if ($hash == crypt($password, $hash))
 		{
 			return $username;
 		} else
