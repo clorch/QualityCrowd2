@@ -158,10 +158,10 @@ class Batch extends Base
 
 	public function getWorker($wid)
 	{
-		$store = new DataStore();
-		$meta = $store->readWorker('meta', null, $this->batchId, $wid);
+		$meta = $this->store->readWorker('meta', null, $this->batchId, $wid);
 		if (is_array($meta)) {
-    		$meta['stepId'] = $store->readWorker('stepId', null, $this->batchId, $wid);
+    		$meta['stepNum'] = $this->store->readWorker('stepNum', null, $this->batchId, $wid);
+    		$meta['stepId'] = $this->translateStepNum($meta['stepNum'], $wid);
     		$meta['finished'] = ($meta['stepId'] == $this->countSteps() - 1);
     	}
 
@@ -170,7 +170,6 @@ class Batch extends Base
 
 	public function workers($includeResults = false)
 	{
-		$store = new DataStore();
 		$workers = array();
 
 		$path = DATA_PATH . $this->batchId . DS . 'workers' . DS;
@@ -181,23 +180,24 @@ class Batch extends Base
 	    	$file = preg_replace('#^' . preg_quote($path) . '#', '', $file);
 	    	$wid = preg_replace('#'.DSX.'$#', '', $file);
 
-	    	$meta = $store->readWorker('meta', null, $this->batchId, $wid);
-			$map = $store->readWorker('stepMap', null, $this->batchId, $wid);
-	    	$meta['stepId'] = $map[$store->readWorker('stepNum', null, $this->batchId, $wid)];
+	    	$meta = $this->store->readWorker('meta', null, $this->batchId, $wid);
+	    	$meta['stepNum'] = $this->store->readWorker('stepNum', null, $this->batchId, $wid);
+	    	$meta['stepId'] = $this->translateStepNum($meta['stepNum'], $wid);
     		$meta['finished'] = ($meta['stepId'] == $this->countSteps() - 1);
     		$workers[$wid] = $meta;
 
 	    	if ($includeResults) {
-	    		$results = $store->readWorkerCSV('results', $this->batchId, $wid);
+	    		$results = $this->store->readWorkerCSV('results', $this->batchId, $wid);
 
 	    		// calculate durations
 	    		$durations = array();
 	    		if (is_array($results))
 	    		{
 	    			$lastTimestamp = $meta['timestamp'];
-					foreach($results as $stepId => &$stepResults)
+					foreach($results as $stepNum => &$stepResults)
 					{
-						$durations[$map[$stepId]] = $stepResults[1] - $lastTimestamp;
+						$stepId = $stepResults[0];
+						$durations[$stepId] = $stepResults[1] - $lastTimestamp;
 						$lastTimestamp = $stepResults[1];
 					}
 				}
@@ -351,18 +351,23 @@ class Batch extends Base
 
 	public function getStepObject($stepNum, $workerId)
 	{
-		$store = new DataStore();
-		$map = $store->readWorker('stepMap', null, $this->batchId, $workerId);
-
-		if (is_null($map)) {
-			$map = $this->createStepMap();
-			$store->writeWorker('stepMap', $map, $this->batchId, $workerId);
-		}
-
-		$stepId = $map[$stepNum];
+		$stepId = $this->translateStepNum($stepNum, $workerId);
 		$step = $this->steps()[$stepId];
 		$stepObject = new Step($step, $this, $workerId, $stepId);
 		return $stepObject;
+	}
+
+	public function translateStepNum($stepNum, $workerId)
+	{
+		$map = $this->store->readWorker('stepMap', null, $this->batchId, $workerId);
+
+		if (is_null($map)) {
+			$map = $this->createStepMap();
+			$this->store->writeWorker('stepMap', $map, $this->batchId, $workerId);
+		}
+
+		$stepId = $map[$stepNum];
+		return $stepId;
 	}
 
 	private function createStepMap()

@@ -25,10 +25,7 @@ class ElementQualification extends StepElement
 		if (!isset($this->qualiMain)) return true;
 		
 		$qualiStepNum = $data['stepNum-qualification-main'];
-
-		$store = new DataStore();
-		$map = $store->readWorker('stepMap', null, $this->arguments['qualification-batch'], $this->step->workerId());
-		$qualiStepId = $map[$qualiStepNum];
+		$qualiStepId = $this->qualiMain->getBatch()->translateStepNum($qualiStepNum, $this->step->workerId());
 
 		if ($this->qualiMain->getBatch()->countSteps() == $qualiStepId + 1) {
 			return true;
