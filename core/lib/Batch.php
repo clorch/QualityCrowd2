@@ -359,13 +359,14 @@ class Batch extends Base
 
 	public function translateStepNum($stepNum, $workerId)
 	{
+		if (is_null($stepNum)) return null;
 		$map = $this->store->readWorker('stepMap', null, $this->batchId, $workerId);
 
 		if (is_null($map)) {
 			$map = $this->createStepMap();
 			$this->store->writeWorker('stepMap', $map, $this->batchId, $workerId);
 		}
-
+		
 		$stepId = $map[$stepNum];
 		return $stepId;
 	}
