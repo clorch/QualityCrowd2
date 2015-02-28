@@ -16,19 +16,24 @@ class AdminBatches extends AdminPage
 		foreach($batches as $batchId => $batch)
 		{
 			$rowTpl = new Template('admin.batches.row');
-			$workers = $batch->workers();
-
 			$rowTpl->set('id', $batchId);
-			$rowTpl->set('state', $batch->state());
-			$rowTpl->set('title', $batch->meta('title'));
-			$rowTpl->set('steps', $batch->countSteps());
-			$rowTpl->set('workers', count($workers));
 
-			$finished = 0;
-			foreach($workers as $w) {
-				if ($w['finished']) $finished ++;
+			if (is_string($batch)) {
+				$rowTpl->set('error', $batch);
+				$rowTpl->set('state', 'error');
+			} else {
+				$workers = $batch->workers();
+				$rowTpl->set('state', $batch->state());
+				$rowTpl->set('title', $batch->meta('title'));
+				$rowTpl->set('steps', $batch->countSteps());
+				$rowTpl->set('workers', count($workers));
+
+				$finished = 0;
+				foreach($workers as $w) {
+					if ($w['finished']) $finished ++;
+				}
+				$rowTpl->set('finished', $finished);
 			}
-			$rowTpl->set('finished', $finished);
 
 			$o .= $rowTpl->render();
 		}
@@ -46,8 +51,13 @@ class AdminBatches extends AdminPage
 	    	$file = preg_replace('#^' . preg_quote(BATCH_PATH) . '#', '', $file);
 	    	$file = preg_replace('#/definition.qcs$#', '', $file);
 	    	
-	    	$myBatchCompiler = new BatchCompiler($file);
-			$batches[$file] = $myBatchCompiler->getBatch();
+	    	try {
+	    		$myBatchCompiler = new BatchCompiler($file);
+				$batches[$file] = $myBatchCompiler->getBatch();
+	    	} catch (Exception $e) {
+	    		$batches[$file] = $e->getMessage();
+	    	}
+	    	
 	    }
 
 	    return $batches;

@@ -254,6 +254,12 @@ table.steps .preview {
 	margin-top:4px;
 }
 
+.batchrow .error {
+	font-size:12px;
+	margin-top:4px;
+	color:red;
+}
+
 .batchrow .infofloat {
 	font-size:25px;
 	text-align:center;
@@ -283,108 +289,10 @@ table.steps .preview {
 	content: "State";
 }
 
-
-
-/* ==================================== Icons */
-
-div.icon {
-    display: inline-block;
-    position: relative;
-    vertical-align: top;
+.batchrow svg {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	font-size:22px;
+	fill: currentColor;
 }
-div.icon:after,
-div.icon:before {
-    border: 2px solid black;
-    content: '';
-    position: absolute;
-}
-
-.batchrow:hover div.icon:after,
-.batchrow:hover div.icon:before {
-	border: 2px solid white;
-}
-
-/* Edit Icon */
-
-div.icon-edit {
-    height: 26px;
-    width: 26px;
-}
-div.icon-edit:after {
-    height: 11px;
-    left: 6px;
-    top: 5px;
-    width:11px;
-    -webkit-transform: rotate(45deg);
-       -moz-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-         -o-transform: rotate(45deg);
-            transform: rotate(45deg);
-    
-}
-
-div.icon-edit:before,
-.batchrow:hover div.icon-edit:before {
-	border: none;
-}
-
-/* Active Icon */
-
-div.icon-active {
-    height: 26px;
-    width: 26px;
-}
-div.icon-active:after {
-    border-bottom: 8px solid transparent;
-    border-left: 13px solid black;
-    border-right: 13px solid transparent;
-    border-top: 8px solid transparent;
-    height: 0;
-    left: 8px;
-    top: 5px;
-    width: 0;
-}
-
-.batchrow:hover div.icon-active:after {
-	border-bottom: 8px solid transparent;
-    border-left: 13px solid white;
-    border-right: 13px solid transparent;
-    border-top: 8px solid transparent;
-}
-
-div.icon-active:before,
-.batchrow:hover div.icon-active:before {
-    border: none;
-}
-
-/* Complete Icon */
-
-div.icon-post {
-    height: 26px;
-    width: 26px;
-}
-div.icon-post:after {
-    height: 14px;
-    left: 13px;
-    top: 5px;
-    width: 0;
-    -webkit-transform: rotate(45deg);
-       -moz-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-         -o-transform: rotate(45deg);
-            transform: rotate(45deg);
-    
-}
-div.icon-post:before {
-	position:absolute;
-    height: 0;
-    left: 4px;
-    top: 14px;
-    width: 2px;
-    -webkit-transform: rotate(45deg);
-       -moz-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-         -o-transform: rotate(45deg);
-            transform: rotate(45deg);
-}
-

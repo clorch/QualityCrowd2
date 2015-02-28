@@ -43,6 +43,7 @@ class Batch extends Base
 			case 'edit':   return 'Edit';
 			case 'active': return 'Active';
 			case 'post':   return 'Complete';
+			case 'error':  return 'Error';
 		}
 	}
 
