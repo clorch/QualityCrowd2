@@ -8,15 +8,29 @@ class AdminBatch extends AdminPage
 		$this->tpl->set('id', $batchId);
 
 		$myBatchCompiler = new BatchCompiler($batchId);
-		if (!$myBatchCompiler->exists())
-		{
-			if (isset($this->path[2]) && $this->path[2] == 'new')
-			{
-				$myBatchCompiler->create();
-			}
+
+		// save QC-Script
+		if (isset($this->path[2]) && $this->path[2] == 'edit' && isset($_POST['qcs'])) {
+			$myBatchCompiler->setSource($_POST['qcs']);
 		}
 
-		$batch = $myBatchCompiler->getBatch();
+		try {
+			if (!$myBatchCompiler->exists()) {
+				if (isset($this->path[2]) && $this->path[2] == 'new') {
+					$myBatchCompiler->create();
+				}
+			}
+			$batch = $myBatchCompiler->getBatch();
+		} catch (Exception $e) {
+			$this->tpl->set('subpage', 'edit');
+			$myTpl = new Template('admin.batch.edit');
+			$myTpl->set('qcs', $myBatchCompiler->getSource());
+			$myTpl->set('state', 'error');
+			$myTpl->set('error', $e->getMessage());
+			$myTpl->set('readonly', false);
+			$this->tpl->set('content', $myTpl->render());
+			return;
+		}
 
 		if (isset($this->path[2])) 
 		{	
@@ -26,11 +40,6 @@ class AdminBatch extends AdminPage
 			{
 			case 'new':
 			case 'edit':
-				// save QC-Script
-				if (isset($_POST['qcs'])) {
-					$myBatchCompiler->setSource($_POST['qcs']);
-				}
-
 				// save state
 				if (isset($_POST['state'])) {
 					$batch->setState($_POST['state']);
@@ -39,6 +48,12 @@ class AdminBatch extends AdminPage
 				$myTpl = new Template('admin.batch.edit');
 				$myTpl->set('qcs', $myBatchCompiler->getSource());
 				$myTpl->set('state', $batch->state());
+
+				if ($batch->state() == 'post' or $batch->state() == 'active') {
+					$myTpl->set('readonly', true);
+				} else {
+					$myTpl->set('readonly', false);
+				}
 				break;
 
 			case 'validate':
@@ -106,6 +121,5 @@ class AdminBatch extends AdminPage
 		}
 
 		$this->tpl->set('content', $myTpl->render());
-
 	}
 }
