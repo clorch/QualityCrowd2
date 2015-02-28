@@ -4,6 +4,8 @@ return [
 
 'timezone' => 'Europe/Berlin',
 
+'debug' => true,
+
 'adminUsers' => [
 	// username: admin
 	// password: password

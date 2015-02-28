@@ -18,42 +18,43 @@ class Request extends Base
 			exit;
 		}
 
-		if ($path[0] == 'setup')
-		{
+		if ($path[0] == 'setup') {
 			header('Location: ' . BASE_URL . 'admin');
 			exit;
 		}
 
-		if ($path[0] == 'admin')
-		{
+		if ($path[0] == 'admin') {
 			$username = $this->login();
 
 			array_shift($path);
 			if (count($path) == 0) $path[] = 'batches';
-			$admin = new Admin($username, $path);
-			echo $admin->render();
 
-			return;
-		} else
-		{
+			try {
+				$admin = new Admin($username, $path);
+				echo $admin->render();
+			} catch (Exception $e) {
+				return $this->renderException($e);
+			}
+		} else {
 			$this->processMain($path);
-			return;
 		}
 	}
 
 	private function processMain($path)
 	{
-		if (count($path) < 2) die('invalid URL');
-
 		// extract batch id
 		$batchId = preg_replace("/[^a-zA-Z0-9-]/", "", $path[0]);
 		if ($batchId == '') die('invalid URL');
 
-		// extract worker id
-		$workerId = $path[1];		
+		if (count($path) == 1) {
+			// extract worker id
+			$workerId = uniqid();
+			header('Location: '.BASE_URL.$path[0].'/'.$workerId);
+		}
 
 		// check worker id
-		if(preg_match('/[^a-zA-Z0-9]/i', $path[1]) || 
+		$workerId = $path[1];	
+		if(preg_match('/[^a-zA-Z0-9]/i', $workerId) || 
 		   $workerId == '' || 
 		   strlen($workerId) > 64) 
 		{
@@ -62,18 +63,16 @@ class Request extends Base
 
 		// handle manual restart
 		$restart = false;
-		if (isset($_GET['restart']))
-		{
+		if (isset($_GET['restart'])) {
 			$restart = true;
 		}
 
-		$myPage = new Main($batchId, $workerId, 'main', $restart);
-
 		try {
+			$myPage = new Main($batchId, $workerId, 'main', $restart);
 			echo $myPage->render();
 		} catch (Exception $e) {
 			return $this->renderException($e);
-		}	
+		}
 	}
 
 	private function login()
@@ -83,11 +82,9 @@ class Request extends Base
 		    $password = $_SERVER['PHP_AUTH_PW'];
 
 		    $username = $this->auth($username, $password);
-		    if ($username !== false)
-		    {
+		    if ($username !== false) {
 		    	return $username;
-		    } else 
-		    {
+		    } else {
 		    	sleep(1);
 		    }
 		}
@@ -103,11 +100,9 @@ class Request extends Base
 		$users = $this->getConfig('adminUsers');
 		$hash = $users[$username];
 
-		if ($hash == crypt($password, $hash))
-		{
+		if ($hash == crypt($password, $hash)) {
 			return $username;
-		} else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -116,7 +111,10 @@ class Request extends Base
 	{
 		$errorTpl = new Template('error');
 		$errorTpl->set('message', $e->getMessage());
-		$errorTpl->set('trace', $e->getTraceAsString());
+
+		if ($this->getConfig('debug')) {
+			$errorTpl->set('trace', $e->getTraceAsString());
+		}
 
 		echo $errorTpl->render();
 	}

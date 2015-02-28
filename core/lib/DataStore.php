@@ -111,6 +111,8 @@ class DataStore extends Base
 
 	private function delete($type, $path, $key)
 	{
+		if (!file_exists($path)) return;
+		
 		if ($key == '')
 		{
 		    $files = glob($path . '*', GLOB_MARK);

@@ -15,10 +15,9 @@
 
 		<h1>Error!</h1>
 		<p>The following error occured:<p>
-		<code><?= $message ?></code>
+		<pre><?= $message ?></pre>
 		<?php if(isset($trace)): ?>
-		<br/><br/>
-		<code><?= $trace ?></code>
+			<pre><?= $trace ?></pre>
 		<?php endif; ?>
 		<p>Restart the test to try again or contact the test supervisor.<p>
 
