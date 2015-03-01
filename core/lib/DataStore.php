@@ -1,6 +1,5 @@
 <?php
-
-require(ROOT_PATH.'core'.DS.'lib'.DS.'fstools.php');
+namespace Clho\QualityCrowd;
 
 class DataStore extends Base
 {
@@ -49,7 +48,7 @@ class DataStore extends Base
 	public function deleteAllWorkers($batchId)
 	{
 		$path = $this->getDataPath('batch', $batchId);
-		rrmdir($path . 'workers' . DS);
+		$this->rrmdir($path . 'workers' . DS);
 	}
 
 	private function read($type, $path, $key, $default)
@@ -77,7 +76,7 @@ class DataStore extends Base
 				return $rows;
 
 			default:
-				throw new Exception("Unknown data type '$type'");
+				throw new \Exception("Unknown data type '$type'");
 				break;
 		}
 	}
@@ -102,7 +101,7 @@ class DataStore extends Base
 				break;
 
 			default:
-				throw new Exception("Unknown data type '$type'");
+				throw new \Exception("Unknown data type '$type'");
 				break;
 		}
 
@@ -132,13 +131,11 @@ class DataStore extends Base
 		}
 	}
 
-
 	/* possible scopes:
 	 *  - batch    /data/<batchid>/
 	 *  - meta     /data/<batchid>/meta/<key> 
 	 *  - workers  /data/<batchid>/workers/<workerid>/<key> 
 	 */
-
 	private function getDataPath($scope, $batchId, $workerId = '', $create = false) 
 	{
 		$path = '';
@@ -188,5 +185,27 @@ class DataStore extends Base
 			case 'json': return '.txt';
 			case 'csv':  return '.csv';
 		}
+	}
+
+	private function rrmdir($dir) 
+	{   
+	    if (!is_dir($dir)) return;
+
+	    $objects = scandir($dir);
+	    if(sizeof($objects) > 0) {
+	        foreach ($objects as $file) {
+	            if ($file == "." || $file == "..") continue;
+	            
+	            if (is_dir($dir.DS.$file)) {
+	                rrmdir($dir.DS.$file);
+	            } else {   
+	                @chmod($dir.DS.$file, 0777);
+	                unlink($dir.DS.$file);
+	            }
+	        }
+	    }
+	    
+	    @chmod($dir, 0777);
+	    rmdir($dir);
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class ElementTitle extends StepElement
 {

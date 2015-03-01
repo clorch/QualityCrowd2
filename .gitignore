@@ -2,6 +2,9 @@
 *.sublime-project
 *.sublime-workspace
 
+vendor
+composer.phar
+
 core/tmp
 data
 media

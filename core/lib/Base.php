@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 abstract class Base
 {
@@ -7,8 +8,9 @@ abstract class Base
 
 	public function __construct()
 	{
-		if (get_class($this) <> 'DataStore')
+		if (get_class($this) <> 'Clho\QualityCrowd\DataStore') {
 			$this->store = new DataStore();
+		}
 
 		if (!is_array(self::$config))
 		{

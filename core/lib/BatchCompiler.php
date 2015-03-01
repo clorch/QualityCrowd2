@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class BatchCompiler extends Base
 {
@@ -184,7 +185,7 @@ class BatchCompiler extends Base
 			$this->source = $source;
 			$file = $this->getSourceFileName();
 			file_put_contents($file, $source);
-			chmod($file, $this->getConfig('filePermissions'));
+			@chmod($file, $this->getConfig('filePermissions'));
 		}
 	}
 
@@ -221,7 +222,7 @@ EOT;
 	{
 		if (!$this->exists())
 		{
-			throw new Exception('Batch with id "' . $this->batchId . '" not found');
+			throw new \Exception('Batch with id "' . $this->batchId . '" not found');
 		}
 
 		$myBatch = null;
@@ -265,20 +266,20 @@ EOT;
 			
 			if (!isset(self::$syntax[$words[0]]))
 			{
-				throw new Exception ($this->batchId . ': unknown command "' . $words[0] . '"');
+				throw new \Exception ($this->batchId . ': unknown command "' . $words[0] . '"');
 			}
 			$cmd = self::$syntax[$words[0]];
 
 			if (count($words) < $cmd['minArguments'] + 1) 
 			{
-				throw new Exception($this->batchId . ': ' .
+				throw new \Exception($this->batchId . ': ' .
 					'"' . $words[0] . '" requires at least ' . 
 					$cmd['minArguments'] . ' arguments');
 			}
 
 			if (count($words) > count($cmd['arguments']) + 1) 
 			{
-				throw new Exception($this->batchId . ': ' .
+				throw new \Exception($this->batchId . ': ' .
 					'"' . $words[0] . '" accepts a maximum of ' . 
 					count($cmd['arguments']) . ' arguments');
 			}
@@ -328,7 +329,7 @@ EOT;
 				}
 			}
 			if ($myList === null) {
-				throw new Exception("List with name '{$loop['arguments'][2]}' not found.");
+				throw new \Exception("List with name '{$loop['arguments'][2]}' not found.");
 			}
 
 			// expanding

@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class Template
 {
@@ -8,9 +9,8 @@ class Template
 
 	public function __construct($name, $scope = '')
 	{
-		if (!self::exists($name))
-		{
-			throw new Exception("Template \"$name\" not found");
+		if (!self::exists($name)) {
+			throw new \Exception("Template \"$name\" not found");
 		}
 
 		$this->name = $name;
@@ -38,7 +38,7 @@ class Template
 	public function setArray($array) 
 	{
 		if (!is_array($array)) {
-			throw new Exception("Parameter has to be an array");
+			throw new \Exception("Parameter has to be an array");
 		}
 
 		self::$fields[$this->scope] = array_merge(self::$fields[$this->scope], $array);
@@ -46,13 +46,13 @@ class Template
 
 	public function render()
 	{	
-		foreach(self::$fields[$this->scope] as $key => $value)
-		{
+		$this->set('T', new TemplateHelpers());
+
+		foreach(self::$fields[$this->scope] as $key => $value) {
 			$$key = $value;
 		}
 		
 		ob_start();
-		require_once('templateHelpers.php');
 		require(TEMPLATE_PATH . $this->name . '.tpl.php');
 		$o = ob_get_contents();
 		ob_end_clean();

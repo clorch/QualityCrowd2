@@ -49,10 +49,7 @@ form input, button, form select {
 form select {
 	-webkit-appearance: push-button;
 	border-radius: 3px;
-	-webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
-	background-image: url(../img/selectarrow.png);
-	background-position: center right;
-	background-repeat: no-repeat;
+	background:url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24"><path d="M16.585 8.585l-4.585 4.585-4.585-4.585-1.415 1.415 6 6 6-6z" fill="#444444"></path></svg>') center right no-repeat, linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
 	border: 1px solid #AAA;
 	font-size: inherit;
 	overflow: hidden;

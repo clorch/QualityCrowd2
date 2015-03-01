@@ -4,7 +4,7 @@
 		<div class="infofloat finished">&nbsp;</div>
 		<div class="infofloat workers">&nbsp;</div>
 		<div class="infofloat steps">&nbsp;</div>
-		<div class="infofloat state" title="<?= Batch::readableState($state) ?>">
+		<div class="infofloat state" title="<?= Clho\QualityCrowd\Batch::readableState($state) ?>">
 			<svg><use xlink:href="#icon-<?= $state ?>" /></svg>
 		</div>
 		<div class="id"><?= $id ?></div>
@@ -13,7 +13,7 @@
 		<div class="infofloat finished"><?= $finished ?></div>
 		<div class="infofloat workers"><?= $workers ?></div>
 		<div class="infofloat steps"><?= $steps ?></div>
-		<div class="infofloat state" title="<?= Batch::readableState($state) ?>">
+		<div class="infofloat state" title="<?= Clho\QualityCrowd\Batch::readableState($state) ?>">
 			<svg><use xlink:href="#icon-<?= $state ?>" /></svg>
 		</div>
 		<div class="id"><?= $id ?></div>

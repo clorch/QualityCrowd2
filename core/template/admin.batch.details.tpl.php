@@ -4,7 +4,7 @@
 	<tr>
 		<th><?= ucfirst($k) ?></th>
 		<td><?php if ($k == 'timeout') {
-				echo formatTime($v);
+				echo $T->formatTime($v);
 			} else if ($k == 'workers') {
 				echo ($v == -1 ? '∞' : $v);
 			} else {
@@ -14,7 +14,7 @@
 <?php endforeach; ?>
 	<tr>
 		<th>State</th>
-		<td><?= Batch::readableState($state) ?></td>
+		<td><?= Clho\QualityCrowd\Batch::readableState($state) ?></td>
 	</tr>
 	<tr>
 		<th>Worker URL</th>
@@ -29,7 +29,7 @@
 	<?php if(count($group['steps']) > 1): ?>
 		<?php $groupStarted = true; ?>
 		<tr class="group">
-			<td class="name" colspan="4"><?= ifset($group['arguments']['name']) ?></td>
+			<td class="name" colspan="4"><?= $T->ifset($group['arguments']['name']) ?></td>
 		</tr>
 		<?php if (isset($group['properties'])):
 			ksort($group['properties']);
@@ -37,7 +37,7 @@
 				<tr class="property">
 					<td>&nbsp;</td>
 					<td class="property-key"><?= $pk ?></td>
-					<td class="property-value"><?= formatPropertyValue($pv) ?></td>
+					<td class="property-value"><?= $T->formatPropertyValue($pv) ?></td>
 					<td></td>
 				</tr>
 			<?php endforeach; ?>
@@ -59,7 +59,7 @@
 
 			$o .= '<tr class="element">';
 			$o .= '<td class="command">' . $e['command'] . '</td>';
-			$o .= '<td colspan="2">' . trimText(implode(' &nbsp; &nbsp; ', $e['arguments']), 70) . '</td>';
+			$o .= '<td colspan="2">' . $T->trimText(implode(' &nbsp; &nbsp; ', $e['arguments']), 70) . '</td>';
 			$o .= '</tr>';
 
 			if (isset($e['properties'])) {
@@ -67,7 +67,7 @@
 				foreach($e['properties'] as $pk => $pv) {
 					$o .= '<tr class="property">';
 					$o .= '<td class="property-key">' . $pk . '</td>';
-					$o .= '<td class="property-value" colspan="2">'. formatPropertyValue($pv) . '</td>';
+					$o .= '<td class="property-value" colspan="2">'. $T->formatPropertyValue($pv) . '</td>';
 					$o .= '</tr>';
 				}
 			}
@@ -75,9 +75,9 @@
 		?>
 		<tr class="step">
 			<td class="number" rowspan="<?= $rows ?>"><?= ($sk + 1) ?></td>
-			<td class="command" colspan="2"><?= ifset($step['arguments']['name']) ?></td>
+			<td class="command" colspan="2"><?= $T->ifset($step['arguments']['name']) ?></td>
 			<td class="preview">
-				<a href="<?= BASE_URL ?>admin/batch/<?= $id ?>/<?= $sk ?>">Preview</a>
+				<?= $T->link('Preview', 'admin/batch/'.$id.'/'.$sk) ?>
 			</td>
 		</tr>
 		<?php if (isset($step['properties'])):
@@ -85,7 +85,7 @@
 			foreach($step['properties'] as $pk => $pv): ?>
 				<tr class="property">
 					<td class="property-key"><?= $pk ?></td>
-					<td class="property-value" colspan="1"><?= formatPropertyValue($pv) ?></td>
+					<td class="property-value" colspan="1"><?= $T->formatPropertyValue($pv) ?></td>
 					<td></td>
 				</tr>
 			<?php endforeach; 

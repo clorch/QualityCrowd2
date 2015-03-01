@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class BatchBuilder extends Base
 {
@@ -137,7 +138,7 @@ class BatchBuilder extends Base
 				}
 				break;
 			default:
-				throw new Exception($this->batchId . ': invalid "end" command');
+				throw new \Exception($this->batchId . ': invalid "end" command');
 		}
 	}
 

@@ -1,9 +1,9 @@
 <ul class="submenu">
 	<li <?= ($subpage == '' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/doc">Introduction</a>
+		<?= $T->link('Introduction', 'admin/doc') ?>
 	</li>
 	<li <?= ($subpage == 'reference' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/doc/reference">Command Reference</a>
+		<?= $T->link('Command Reference', 'admin/doc/reference') ?>
 	</li>
 </ul>
 

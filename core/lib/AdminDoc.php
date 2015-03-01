@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class AdminDoc extends AdminPage
 {
@@ -7,14 +8,12 @@ class AdminDoc extends AdminPage
 		$subpage = (isset($this->path[1]) ? $this->path[1] : '');
 		$this->tpl->set('subpage', $subpage);
 
-		require(ROOT_PATH . 'core'.DS.'3p'.DS.'markdown'.DS.'markdown.php');
-
 		switch($subpage)
 		{
 			default:
 			case '':
 				$md = file_get_contents(ROOT_PATH . 'core'.DS.'doc'.DS.'qc-script.md');
-				$html = Markdown($md);
+				$html = \Michelf\Markdown::defaultTransform($md);
 				$this->tpl->set('content', $html);
 				break;
 

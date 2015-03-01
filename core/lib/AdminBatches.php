@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class AdminBatches extends AdminPage
 {
@@ -50,16 +51,14 @@ class AdminBatches extends AdminPage
 	    {
 	    	$file = preg_replace('#^' . preg_quote(BATCH_PATH) . '#', '', $file);
 	    	$file = preg_replace('#/definition.qcs$#', '', $file);
-	    	
 	    	try {
 	    		$myBatchCompiler = new BatchCompiler($file);
 				$batches[$file] = $myBatchCompiler->getBatch();
-	    	} catch (Exception $e) {
+	    	} catch (\Exception $e) {
 	    		$batches[$file] = $e->getMessage();
 	    	}
-	    	
 	    }
-
+	    
 	    return $batches;
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class Admin extends AdminPage
 {
@@ -15,7 +16,7 @@ class Admin extends AdminPage
 
 	public function prepareRender()
 	{
-		$class = 'Admin' . ucfirst($this->path[0]);
+		$class = 'Clho\QualityCrowd\Admin' . ucfirst($this->path[0]);
 		$pageObject = new $class($this->path);
 
 		$this->tpl->set('page', $this->path[0]);

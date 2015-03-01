@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class Step extends Base
 {
@@ -36,7 +37,7 @@ class Step extends Base
 	private function getElement($element, $ek)
 	{
 		$uid = hash("crc32b", $this->batch->id() . '-' . $this->stepId . '-' . $ek);
-		$class = 'Element' . ucfirst($element['command']);
+		$class = 'Clho\QualityCrowd\Element' . ucfirst($element['command']);
 		return new $class($element, $this, $uid);
 	}
 

@@ -1,0 +1,40 @@
+{
+    "name": "clho/qualitycrowd2",
+    "type": "project",
+    "description": "Web application for QoE testing and related tasks",
+    "homepage": "https://github.com/clorch/QualityCrowd2",
+    "license" : "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Clemens Horch",
+            "email": "mail@clemenshorch.de",
+            "homepage" : "http://www.clemenshorch.de/",
+            "role" : "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Clho\\QualityCrowd\\": "core/lib/" }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "jpgraph/jpgraph" : "dev-master",
+        "phpoffice/phpexcel": "1.8.0",
+        "michelf/php-markdown": "1.4.1",
+        "garetjax/phpbrowscap": "2.0",
+        "codemirror/CodeMirror": "5.0.0"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "codemirror/CodeMirror",
+                "version": "5.0.0",
+                "source": {
+                    "url": "git://github.com/codemirror/CodeMirror.git",
+                    "type": "git",
+                    "reference": "5.0.0"
+                }
+            }
+        }
+    ]    
+}

@@ -10,21 +10,21 @@
 			<select name="state">
 				<?php if ($state == 'edit'): ?>
 				<option value="edit" <?= ($state == 'edit' ? 'selected="selected"' : '') ?>>
-					<?= Batch::readableState('edit') ?>
+					<?= Clho\QualityCrowd\Batch::readableState('edit') ?>
 				</option>
 				<?php endif; ?>
 				<option value="active" <?= ($state == 'active' ? 'selected="selected"' : '') ?>>
-					<?= Batch::readableState('active') ?>
+					<?= Clho\QualityCrowd\Batch::readableState('active') ?>
 				</option>
 				<?php if ($state == 'active' || $state == 'post'): ?>
 				<option value="post" <?= ($state == 'post' ? 'selected="selected"' : '') ?>>
-					<?= Batch::readableState('post') ?>
+					<?= Clho\QualityCrowd\Batch::readableState('post') ?>
 				</option>
 				<?php endif; ?>
 			</select>
 			<?php if ($state == 'edit'): ?>
-				<p>Changing from "<?= Batch::readableState('edit') ?>" 
-					to "<?= Batch::readableState('active') ?>" deletes all result data!</p>
+				<p>Changing from "<?= Clho\QualityCrowd\Batch::readableState('edit') ?>" 
+					to "<?= Clho\QualityCrowd\Batch::readableState('active') ?>" deletes all result data!</p>
 			<?php endif; ?>
 		</fieldset>
 		<?php if ($readonly): ?>

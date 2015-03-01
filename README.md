@@ -46,10 +46,11 @@ Setup
 
 1. Place all files in a directory inside your webservers document root.
 2. Make sure the webserver user has write permissions in this directory.
-3. Browse to `.../setup/` with your web browser.
-4. If any errors are displayed fix them and refresh the `.../setup/`.
-5. Change the admin password in `/core/config.php`!
-6. Done. You can access the admin interface by browsing to the install directory and entering your password.
+3. Run `composer install`
+4. Browse to `.../setup/` with your web browser.
+5. If any errors are displayed fix them and refresh the setup page
+6. Change the admin password in `/core/config.php`!
+7. Done. You can access the admin interface by browsing to the install directory and entering your password.
 
 License
 -------

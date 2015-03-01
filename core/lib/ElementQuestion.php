@@ -1,7 +1,7 @@
 <?php
+namespace Clho\QualityCrowd;
 
 // this class handles the step commands "video", "image" and "question"
-
 class ElementQuestion extends StepElement
 {
 	protected function init() 
@@ -44,6 +44,7 @@ class ElementQuestion extends StepElement
 			foreach($this->getAnswers() as $answer) {
 				$cols[] = 'text-' . $answer['value'] . '-' . $this->uid;
 			}
+			break;
 
 			case 'decisions':
 			$i = 0;
@@ -55,7 +56,7 @@ class ElementQuestion extends StepElement
 			break;
 
 			default:
-			throw new Exception("Invalid answer mode");
+			throw new \Exception("Invalid answer mode");
 			break;
 		}
 		

@@ -2,19 +2,19 @@
 
 <ul class="submenu">
 	<li <?= ($subpage == '' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/batch/<?= $id ?>">View</a>
+		<?= $T->link('View', 'admin/batch/'.$id) ?>
 	</li>
 	<li <?= ($subpage == 'edit' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/batch/<?= $id ?>/edit">Edit</a>
+		<?= $T->link('Edit', 'admin/batch/'.$id.'/edit') ?>
 	</li>
 	<li <?= ($subpage == 'validate' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/batch/<?= $id ?>/validate">Validate Worker</a>
+		<?= $T->link('Validate Worker', 'admin/batch/'.$id.'/validate') ?>
 	</li>
 	<li <?= ($subpage == 'results' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/batch/<?= $id ?>/results">Results</a>
+		<?= $T->link('Results', 'admin/batch/'.$id.'/results') ?>
 	</li>
 	<li <?= ($subpage == 'browsers' ? 'class="active"' : '') ?>>
-		<a href="<?= BASE_URL ?>admin/batch/<?= $id ?>/browsers">Browsers</a>
+		<?= $T->link('Browsers', 'admin/batch/'.$id.'/browsers') ?>
 	</li>
 </ul>
 

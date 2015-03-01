@@ -4,10 +4,10 @@ if (count($results) == 0) {
 	return;
 }
 
-require_once (ROOT_PATH .'core'.DS.'3p'.DS.'jpgraph'.DS.'src'.DS.'jpgraph.php');
-require_once (ROOT_PATH .'core'.DS.'3p'.DS.'jpgraph'.DS.'src'.DS.'jpgraph_bar.php');
-require_once (ROOT_PATH .'core'.DS.'3p'.DS.'jpgraph'.DS.'src'.DS.'jpgraph_line.php');
-require_once (ROOT_PATH .'core'.DS.'3p'.DS.'jpgraph'.DS.'src'.DS.'jpgraph_plotline.php');
+JpGraph\JpGraph::load();
+JpGraph\JpGraph::module('bar');
+JpGraph\JpGraph::module('line');
+JpGraph\JpGraph::module('plotline');
 
 // prepare workers graph
 $dataY = array();
@@ -123,8 +123,8 @@ foreach($results as $stepId => &$step)
 
 <h3>Download Results</h3>
 <ul>
-	<li><a href="<?= BASE_URL.'admin/batch/'.$id.'/results.csv' ?>">Downlad as CSV-file</a></li>
-	<li><a href="<?= BASE_URL.'admin/batch/'.$id.'/results.xlsx' ?>">Downlad as XLSX-file</a></li>
+	<li><?= $T->link('Downlad as CSV-file', 'admin/batch/'.$id.'/results.csv') ?></li>
+	<li><?= $T->link('Downlad as XLSX-file', 'admin/batch/'.$id.'/results.xlsx') ?></li>
 </ul>
 
 <h3>Workers per Step</h3>
@@ -155,7 +155,7 @@ foreach($results as $stepId => &$step):
 ?>
 	<tr class="step">
 		<td class="number" rowspan="<?= $rows ?>"><?= ($stepId + 1) ?></td>
-		<td class="command" colspan="4"><?= ifset($steps[$stepId]['arguments']['name']) ?></td>
+		<td class="command" colspan="4"><?= $T->ifset($steps[$stepId]['arguments']['name']) ?></td>
 	</tr>
 	
 	<tr class="property">
@@ -167,17 +167,17 @@ foreach($results as $stepId => &$step):
 	<tr class="property">
 		<td class="property-key last" rowspan="3">duration</td>
 		<td class="property-key2">average</td>
-		<td class="property-value"><?= formatTime($step['duration-stats']['mean']) ?></td>
+		<td class="property-value"><?= $T->formatTime($step['duration-stats']['mean']) ?></td>
 		<td class="empty"></td>
 	</tr>
 	<tr class="property">
 		<td class="property-key2">maximum</td>
-		<td class="property-value"><?= formatTime($step['duration-stats']['max']) ?></td>
+		<td class="property-value"><?= $T->formatTime($step['duration-stats']['max']) ?></td>
 		<td class="empty"></td>
 	</tr>
 	<tr class="property">
 		<td class="property-key2 last">minimum</td>
-		<td class="property-value last"><?= formatTime($step['duration-stats']['min']) ?></td>
+		<td class="property-value last"><?= $T->formatTime($step['duration-stats']['min']) ?></td>
 		<td class="last"></td>
 	</tr>
 

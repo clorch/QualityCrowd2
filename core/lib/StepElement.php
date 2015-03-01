@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 abstract class StepElement extends Base
 {

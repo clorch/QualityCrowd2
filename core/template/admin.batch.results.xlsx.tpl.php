@@ -1,9 +1,6 @@
 <?php
-spl_autoload_unregister('myAutoloader');
-require_once ROOT_PATH.'core'.DS.'3p'.DS.'phpexcel'.DS.'Classes'.DS.'PHPExcel.php';
-
 // Create new PHPExcel object
-$objPHPExcel = new PHPExcel();
+$objPHPExcel = new \PHPExcel();
 
 // Set document properties
 $objPHPExcel->getProperties()->setCreator("QualityCrowd 2")
@@ -27,7 +24,7 @@ header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetm
 header('Content-Disposition: attachment;filename="' . $batchId . '.xlsx"');
 header('Cache-Control: max-age=0');
 
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 $objWriter->save('php://output');
 
 

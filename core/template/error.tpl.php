@@ -2,12 +2,11 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-
 		<title>QualityCrowd 2</title>
 
-		<link rel="stylesheet" href="<?= BASE_URL ?>core/files/css/style.css" />
-
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/jquery.js"></script>
+		<?= $T->css('core/files/css/style.css') ?>
+		
+		<?= $T->js('core/files/js/jquery.js') ?>
 	</head>
 	<body>
 		<div class="header">

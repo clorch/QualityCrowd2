@@ -2,14 +2,13 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-
 		<title>QualityCrowd 2</title>
 
-		<link rel="stylesheet" href="<?= BASE_URL ?>core/files/css/style.css" />
+		<?= $T->css('core/files/css/style.css') ?>
 
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/swfobject.js"></script>
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/flashver.js"></script>
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/jquery.js"></script>
+		<?= $T->js('core/files/js/swfobject.js') ?>
+		<?= $T->js('core/files/js/flashver.js') ?>
+		<?= $T->js('core/files/js/jquery.js') ?>
 	</head>
 	<body>
 		<div class="header">
@@ -20,7 +19,7 @@
 			<?php endif; ?>
 
 			<?php if($isLocked && $stepNum < $stepCount - 1 && $timeout > 0): ?>
-			<span id="timeout">Remaining time to finish this step: <?= formatTime($timeout) ?></span>
+			<span id="timeout">Remaining time to finish this step: <?= $T->formatTime($timeout) ?></span>
 			<?php endif; ?>
 		</div>
 

@@ -2,33 +2,32 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-
 		<title>QualityCrowd 2</title>
 
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/swfobject.js"></script>
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/flashver.js"></script>
-		<script type="text/javascript" src="<?= BASE_URL ?>core/files/js/jquery.js"></script>
+		<?= $T->css('core/files/css/style.css') ?>
+		<?= $T->css('core/files/css/admin.css') ?>
 
-		<link rel="stylesheet" href="<?= BASE_URL ?>core/3p/codemirror/lib/codemirror.css">
-		<link rel="stylesheet" href="<?= BASE_URL ?>core/3p/codemirror/theme/ambiance.css">
-    	<script src="<?= BASE_URL ?>core/3p/codemirror/lib/codemirror.js"></script>
-    	<script src="<?= BASE_URL ?>core/3p/codemirror/mode/qc-script/qc-script.js"></script>
+		<?= $T->js('core/files/js/swfobject.js') ?>
+		<?= $T->js('core/files/js/flashver.js') ?>
+		<?= $T->js('core/files/js/jquery.js') ?>
 
-		<link rel="stylesheet" href="<?= BASE_URL ?>core/files/css/style.css" />
-		<link rel="stylesheet" href="<?= BASE_URL ?>core/files/css/admin.css" />
+		<?= $T->css('vendor/codemirror/CodeMirror/lib/codemirror.css') ?>
+		<?= $T->css('vendor/codemirror/CodeMirror/theme/ambiance.css') ?>
+		<?= $T->js('vendor/codemirror/CodeMirror/lib/codemirror.js') ?>
+		<?= $T->js('core/files/js/qc-script.js') ?>
     </head>
 	<body>
 		<div class="header">
 			<h1>QualityCrowd</h1>
 			<ul class="menu">
 				<li <?= ($page == 'batches' || $page == 'batch' ? 'class="active"' : '') ?>>
-					<a href="<?= BASE_URL ?>admin/batches">Batches</a>
+					<?= $T->link('Batches', 'admin/batches') ?>
 				</li>
 				<li <?= ($page == 'doc' ? 'class="active"' : '') ?>> 
-					<a href="<?= BASE_URL ?>admin/doc">Documentation</a>
+					<?= $T->link('Documentation', 'admin/doc') ?>
 				</li>
 				<li <?= ($page == 'maintenance' ? 'class="active"' : '') ?>> 
-					<a href="<?= BASE_URL ?>admin/maintenance">Maintenance</a>
+					<?= $T->link('Maintenance', 'admin/maintenance') ?>
 				</li>
 			</ul>
 		</div>

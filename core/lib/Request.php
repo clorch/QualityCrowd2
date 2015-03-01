@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class Request extends Base
 {
@@ -30,9 +31,10 @@ class Request extends Base
 			if (count($path) == 0) $path[] = 'batches';
 
 			try {
+
 				$admin = new Admin($username, $path);
 				echo $admin->render();
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				return $this->renderException($e);
 			}
 		} else {
@@ -70,7 +72,7 @@ class Request extends Base
 		try {
 			$myPage = new Main($batchId, $workerId, 'main', $restart);
 			echo $myPage->render();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return $this->renderException($e);
 		}
 	}
@@ -107,7 +109,7 @@ class Request extends Base
 		}
 	}
 
-	private function renderException(Exception $e)
+	private function renderException(\Exception $e)
 	{
 		$errorTpl = new Template('error');
 		$errorTpl->set('message', $e->getMessage());

@@ -1,4 +1,5 @@
 <?php
+namespace Clho\QualityCrowd;
 
 class AdminBatch extends AdminPage
 {
@@ -21,7 +22,7 @@ class AdminBatch extends AdminPage
 				}
 			}
 			$batch = $myBatchCompiler->getBatch();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->tpl->set('subpage', 'edit');
 			$myTpl = new Template('admin.batch.edit');
 			$myTpl->set('qcs', $myBatchCompiler->getSource());

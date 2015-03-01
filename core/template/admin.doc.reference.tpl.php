@@ -19,7 +19,7 @@
 
 	<pre><?= $cmdStr ?></pre>
 
-	<?= Markdown($cmdDef['description']) ?>
+	<?= \Michelf\Markdown::defaultTransform($cmdDef['description']) ?>
 
 	<?php if(isset($cmdDef['properties']) && count($cmdDef['properties']) > 0): ?>
 	<h3>Properties</h3>
@@ -33,8 +33,8 @@
 		<?php foreach($cmdDef['properties'] as $propertyKey => $property): ?>
 		<tr>
 			<td><?= $propertyKey ?></td>
-			<td><?= formatPropertyValue($property['default']) ?></td>
-			<td><?= formatPropertyValue($property['values']) ?></td>
+			<td><?= $T->formatPropertyValue($property['default']) ?></td>
+			<td><?= $T->formatPropertyValue($property['values']) ?></td>
 			<td><?= $property['description'] ?></td>
 		</tr>
 		<?php endforeach; ?>
