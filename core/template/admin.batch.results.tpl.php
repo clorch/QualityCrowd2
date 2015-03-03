@@ -4,6 +4,10 @@ if (count($results) == 0) {
 	return;
 }
 
+if(!function_exists("imageantialias")) {
+	function imageantialias($image, $enabled) { return false; }
+}
+
 JpGraph\JpGraph::load();
 JpGraph\JpGraph::module('bar');
 JpGraph\JpGraph::module('line');

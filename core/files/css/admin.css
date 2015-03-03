@@ -20,7 +20,7 @@ pre {
 
 .CodeMirror {
 	border: 1px solid #ccc;
-	height:auto;
+	height:auto !important; 
 }
 
 /* ==================================== Forms */
