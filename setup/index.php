@@ -202,7 +202,7 @@ function rchmod($path, $filemode, $dirmode)
         if(is_link($fullpath)) {
             return false; 
         }
-        if(!is_dir($fullpath) && !chmod($fullpath, $filemode)) {
+        if(!is_dir($fullpath) && !@chmod($fullpath, $filemode)) {
             return false; 
         }
         if(!rchmod($fullpath, $filemode, $dirmode)) {
