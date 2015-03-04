@@ -4,6 +4,10 @@ if (count($workers) == 0) {
 	return;
 }
 
+if(!function_exists("imageantialias")) {
+	function imageantialias($image, $enabled) { return false; }
+}
+
 JpGraph\JpGraph::load();
 JpGraph\JpGraph::module('pie');
 

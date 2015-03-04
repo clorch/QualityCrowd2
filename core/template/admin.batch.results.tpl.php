@@ -26,7 +26,7 @@ foreach($results as $stepId => &$step)
 }
 
 // setup the graph
-$graph = new Graph(700,300);
+$graph = new Graph(760,300);
 $graph->SetScale("textint");
 
 $theme_class = new UniversalTheme;
