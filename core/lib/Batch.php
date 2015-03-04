@@ -183,8 +183,9 @@ class Batch extends Base
 	    	$wid = preg_replace('#'.DSX.'$#', '', $file);
 
 	    	$meta = $this->store->readWorker('meta', null, $this->batchId, $wid);
+	    	$meta['stepMap'] = $this->store->readWorker('stepMap', null, $this->batchId, $wid);
 	    	$meta['stepNum'] = $this->store->readWorker('stepNum', null, $this->batchId, $wid);
-	    	$meta['stepId'] = $this->translateStepNum($meta['stepNum'], $wid);
+	    	$meta['stepId'] = $meta['stepMap'][$meta['stepNum']];
     		$meta['finished'] = ($meta['stepId'] == $this->countSteps() - 1);
     		$workers[$wid] = $meta;
 

@@ -124,7 +124,6 @@ foreach($results as $stepId => &$step)
 
 ?>
 
-
 <h3>Download Results</h3>
 <ul>
 	<li><?= $T->link('Downlad as CSV-file', 'admin/batch/'.$id.'/results.csv') ?></li>

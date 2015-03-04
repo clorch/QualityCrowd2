@@ -16,6 +16,11 @@ $objPHPExcel->createSheet();
 outputDurations($objPHPExcel->getSheet(1), $columns, $workers);
 $objPHPExcel->getSheet(1)->setTitle('durations');
 
+// fill in durations
+$objPHPExcel->createSheet();
+outputStepMaps($objPHPExcel->getSheet(2), $columns, $workers);
+$objPHPExcel->getSheet(2)->setTitle('step maps');
+
 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
 $objPHPExcel->setActiveSheetIndex(0);
 
@@ -44,8 +49,7 @@ function outputResults($sheet, $columns, $workers)
 
 	// Data
 	$r = 4;
-	foreach($workers as $worker)
-	{
+	foreach($workers as $worker) {
 		$sheet->setCellValueExplicitByColumnAndRow(0, $r, $worker['workerId'],
 			PHPExcel_Cell_DataType::TYPE_STRING);
 	    $sheet->setCellValueByColumnAndRow(1, $r, ($worker['finished'] ? 'Yes' : 'No'));
@@ -55,8 +59,7 @@ function outputResults($sheet, $columns, $workers)
 		}
 
 		$c = 2;
-		foreach($worker['results'] as $result)
-		{
+		foreach($worker['results'] as $result) {
 			array_shift($result); // step id
 			array_shift($result); // timestamp
 
@@ -78,23 +81,20 @@ function outputDurations($sheet, $columns, $workers)
 
 	$c = 2;
 	foreach($columns as $stepId => $cols) {
-		
 		$sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
     	$c++;
 	}
 
 	// Data
 	$r = 3;
-	foreach($workers as $worker)
-	{
+	foreach($workers as $worker) {
 		$sheet->setCellValueExplicitByColumnAndRow(0, $r, $worker['workerId'],
 			PHPExcel_Cell_DataType::TYPE_STRING);
 	    $sheet->setCellValueByColumnAndRow(1, $r, ($worker['finished'] ? 'Yes' : 'No'));
 
 		if (is_array($worker['durations'])) {
 			$c = 2;
-			foreach($worker['durations'] as $stepId => $duration)
-			{
+			foreach($worker['durations'] as $stepId => $duration) {
 				$sheet->setCellValueByColumnAndRow($c, $r, $duration);
 				$c++;
 			}
@@ -104,4 +104,36 @@ function outputDurations($sheet, $columns, $workers)
 	}
 }
 
+function outputStepMaps($sheet, $columns, $workers)
+{
+	// Header
+	$sheet->setCellValue('A1', 'Worker ID')
+          ->setCellValue('B1', 'Finished');
+
+	$c = 2;
+	foreach($columns as $stepId => $cols) {
+		$sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
+    	$c++;
+	}
+
+	// Data
+	$r = 3;
+	foreach($workers as $worker) {
+		$sheet->setCellValueExplicitByColumnAndRow(0, $r, $worker['workerId'],
+			PHPExcel_Cell_DataType::TYPE_STRING);
+	    $sheet->setCellValueByColumnAndRow(1, $r, ($worker['finished'] ? 'Yes' : 'No'));
+
+		if (is_array($worker['stepMap'])) {
+			$c = 2;
+			$rmap = array_flip($worker['stepMap']);
+			ksort($rmap);
+			foreach($rmap as $stepId => $stepNum) {
+				$sheet->setCellValueByColumnAndRow($c, $r, $stepNum + 1);
+				$c++;
+			}
+		}
+
+		$r++;
+	}
+}
 
