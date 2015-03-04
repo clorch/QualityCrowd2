@@ -9,29 +9,38 @@ foreach($answers as $answer): ?>
 endforeach; ?>
 
 <div style="text-align:center;">
-	<button type="button" class="decision" id="button-start-<?= $uid ?>">Start</button>
-	<button type="button" class="decision" style="display:none;" id="button-left-<?= $uid ?>"><?= $answers[0]['value'] ?></button>
-	<button type="button" class="decision" style="display:none;" id="button-right-<?= $uid ?>"><?= $answers[0]['text'] ?></button>
+	<button type="button" class="decision" id="button-start-<?= $uid ?>"><em>Start</em></button>
+	<button type="button" class="decision" style="display:none;" id="button-left-<?= $uid ?>"></button>
+	<button type="button" class="decision" style="display:none;" id="button-right-<?= $uid ?>"></button>
 </div>
 
 <script type="text/javascript">
-	var currentRound_<?= $uid ?> = 0;
+	var currentRound_<?= $uid ?> = -1;
 	var maxRounds_<?= $uid ?> = <?= count($answers) ?>;
 	var startTime_<?= $uid ?> = 0;
 
 	var words_<?= $uid ?> = [
-	<?php foreach($answers as $a): ?>
-		['<?= $a['value'] ?>', '<?= $a['text'] ?>'],
-	<?php endforeach; ?>
+	<?php 
+	foreach($answers as $a):
+		if (rand(0,1) == 0) {
+			echo "['".$a['value']."', '".$a['text']."'],\n";
+		} else {
+			echo "['".$a['text']."', '".$a['value']."'],\n";
+		}
+	endforeach; ?>
 	];
 
 	function nextRound_<?= $uid ?>(selectedString)
 	{
-		var end = new Date().getTime();
-		$('input[name=timing-'+currentRound_<?= $uid ?>+'-<?= $uid ?>]').val(end - startTime_<?= $uid ?>);
-		startTime_<?= $uid ?> = new Date().getTime();
-		$('input[name=decision-'+currentRound_<?= $uid ?>+'-<?= $uid ?>]').val(selectedString);
+		if (currentRound_<?= $uid ?> < 0) {
+			$('#button-start-<?= $uid ?>').hide();
+		} else {
+			var end = new Date().getTime();
+			$('input[name=timing-'+currentRound_<?= $uid ?>+'-<?= $uid ?>]').val(end - startTime_<?= $uid ?>);
+			$('input[name=decision-'+currentRound_<?= $uid ?>+'-<?= $uid ?>]').val(selectedString);
+		}
 
+		startTime_<?= $uid ?> = new Date().getTime();
 		currentRound_<?= $uid ?>++;
 
 		if (currentRound_<?= $uid ?> == maxRounds_<?= $uid ?>) {
@@ -46,6 +55,12 @@ endforeach; ?>
 		} else {
 			$('#button-left-<?= $uid ?>').html(words_<?= $uid ?>[currentRound_<?= $uid ?>][0]);
 			$('#button-right-<?= $uid ?>').html(words_<?= $uid ?>[currentRound_<?= $uid ?>][1]);
+			$('#button-left-<?= $uid ?>').show();
+			if (words_<?= $uid ?>[currentRound_<?= $uid ?>][0] == words_<?= $uid ?>[currentRound_<?= $uid ?>][1]) {
+				$('#button-right-<?= $uid ?>').hide();
+			} else {
+				$('#button-right-<?= $uid ?>').show();
+			}
 		}
 	}
 
@@ -60,10 +75,7 @@ endforeach; ?>
 	});
 
 	$('#button-start-<?= $uid ?>').click( function () {
-		$('#button-start-<?= $uid ?>').hide();
-		$('#button-left-<?= $uid ?>').show();
-		$('#button-right-<?= $uid ?>').show();
-		startTime_<?= $uid ?> = new Date().getTime();
+		nextRound_<?= $uid ?>('');
 		return false; // prevent default action
 	});
 </script>

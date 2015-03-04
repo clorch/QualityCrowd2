@@ -222,7 +222,8 @@ video {
 button.decision {
 	display:inline-block;
 	width:45%;
+	height:100px;
 	margin:10px;
 	padding:7px 30px;
-	font-size:20px;
+	font-size:35px;
 }
