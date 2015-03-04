@@ -354,6 +354,11 @@ class Batch extends Base
 	public function getStepObject($stepNum, $workerId)
 	{
 		$stepId = $this->translateStepNum($stepNum, $workerId);
+		return $this->getStepObjectFromId($stepId, $workerId);
+	}
+
+	public function getStepObjectFromId($stepId, $workerId)
+	{
 		$step = $this->steps()[$stepId];
 		$stepObject = new Step($step, $this, $workerId, $stepId);
 		return $stepObject;
