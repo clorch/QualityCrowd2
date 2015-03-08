@@ -75,7 +75,7 @@ class ElementQuestion extends StepElement
 
 			$answers[] = array(
 				'value' => trim($str[0]),
-				'text' => trim($str[1]),
+				'text' => trim((isset($str[1]) ? $str[1] : '')),
 			);
 		}
 
