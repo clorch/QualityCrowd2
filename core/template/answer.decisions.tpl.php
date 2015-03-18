@@ -23,9 +23,9 @@ endforeach; ?>
 	<?php 
 	foreach($answers as $a):
 		if (rand(0,1) == 0) {
-			echo "['".$a['value']."', '".$a['text']."'],\n";
+			echo "['".addslashes($a['value'])."', '".addslashes($a['text'])."'],\n";
 		} else {
-			echo "['".$a['text']."', '".$a['value']."'],\n";
+			echo "['".addslashes($a['text'])."', '".addslashes($a['value'])."'],\n";
 		}
 	endforeach; ?>
 	];
