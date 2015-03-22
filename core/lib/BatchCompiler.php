@@ -141,7 +141,7 @@ class BatchCompiler extends Base
 			'properties'   => array(
 				'answermode'	 => array(
 					'default' => 'discrete', 
-					'values' => 'continous, discrete, strings, text, decisions',
+					'values' => 'continous, discrete, strings, input, text, decisions',
 					'description' => 'Todo'),
 				'answers'		 => array(
 					'default' => '1: First answer; 2: Second answer; 3: Third answer', 

@@ -35,6 +35,10 @@ class ElementQuestion extends StepElement
 			$cols[] = 'text-' . $this->uid;
 			break;
 
+			case 'input':
+			$cols[] = 'text-' . $this->uid;
+			break;
+
 			case 'text':
 			$cols[] = 'length-' . $this->uid;
 			$cols[] = 'text-' . $this->uid;

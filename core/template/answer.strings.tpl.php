@@ -14,17 +14,14 @@
 </table>
 
 <script type="text/javascript">
-
-	$('input[type=text]').keyup( function() {
-		var answered = 1;
-		$('input[type=text]').each(function(i, item) {
-			if($(item).val().length == 0) {
-				answered = 0;
+	$('input[type=text][name$=<?= $uid ?>]').keyup( function() {
+		var answered = 0;
+		$('input[type=text][name$=<?= $uid ?>]').each(function(i, item) {
+			if($(item).val().length > 0) {
+				answered = 1;
 			}
 		});
 		
 		$('input[name=answered-<?= $uid ?>]').val(answered);
 	});
-
 </script>
-
