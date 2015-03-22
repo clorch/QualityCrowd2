@@ -2,10 +2,19 @@
 
 <?php 
 $i = 0;
-foreach($answers as $answer): ?>
+$arr = "";
+foreach($answers as $a): ?>
 	<input type="hidden" name="decision-<?= $i ?>-<?= $uid ?>" value="">
 	<input type="hidden" name="timing-<?= $i ?>-<?= $uid ?>" value="">
-	<?php $i++;
+	<?php 
+	if (rand(0, 1) == 0) {
+		?><input type="hidden" name="order-<?= $i ?>-<?= $uid ?>" value="lr"><?php
+		$arr .= "['".addslashes($a['value'])."', '".addslashes($a['text'])."'],\n";
+	} else {
+		?><input type="hidden" name="order-<?= $i ?>-<?= $uid ?>" value="rl"><?php
+		$arr .=  "['".addslashes($a['text'])."', '".addslashes($a['value'])."'],\n";
+	}
+	$i++;
 endforeach; ?>
 
 <div style="text-align:center;">
@@ -19,16 +28,7 @@ endforeach; ?>
 	var maxRounds_<?= $uid ?> = <?= count($answers) ?>;
 	var startTime_<?= $uid ?> = 0;
 
-	var words_<?= $uid ?> = [
-	<?php 
-	foreach($answers as $a):
-		if (rand(0,1) == 0) {
-			echo "['".addslashes($a['value'])."', '".addslashes($a['text'])."'],\n";
-		} else {
-			echo "['".addslashes($a['text'])."', '".addslashes($a['value'])."'],\n";
-		}
-	endforeach; ?>
-	];
+	var words_<?= $uid ?> = [ <?= $arr ?> ];
 
 	function nextRound_<?= $uid ?>(selectedString)
 	{
