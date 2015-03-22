@@ -35,8 +35,8 @@ if (count($answers) > 2) {
 
 <div id="slider-area-<?= $uid ?>" class="slider-area" style="height:<?= $fullHeight ?>px;">
 	<?php if (count($answers) <= 2): ?>
-		<div class="slider-label" style="top:-6px; left:45px;"><?= $answers[0]['text'] ?></div>
-		<div class="slider-label" style="top:<?= ($fullHeight - 6) ?>px; left:45px;"><?= $answers[1]['text'] ?></div>
+		<div class="slider-label" style="top:-6px; left:45px;"><?= $answers[1]['text'] ?></div>
+		<div class="slider-label" style="top:<?= ($fullHeight - 6) ?>px; left:45px;"><?= $answers[0]['text'] ?></div>
 	<?php endif; ?>
 	<div id="slider-box-<?= $uid ?>" class="slider-box" style="height:<?= $fullHeight ?>px;"></div>
 	<div id="slider-handle-<?= $uid ?>" class="slider-handle" style="top:-5px; display:none;"></div>
