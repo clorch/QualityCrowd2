@@ -47,6 +47,7 @@
 		lineNumbers: true,
 		theme: 'ambiance',
 		lineWrapping: true,
+		viewportMargin: Infinity,
 		<?php if ($readonly): ?>
 		readOnly: true,
 		<?php endif; ?>
