@@ -4,7 +4,7 @@ namespace Clho\QualityCrowd;
 class BatchCompiler extends Base
 {
 	private $batchId;
-	private $source;
+	private $files;
 
 	public static $syntax = array(
 		// special commands
@@ -167,31 +167,12 @@ class BatchCompiler extends Base
 	public function __construct($batchId) 
 	{
 		$this->batchId = $batchId;
-	}
-
-	public function getSource() 
-	{
-		// load source file
-		if ($this->source == '')
-			$this->source = file_get_contents($this->getSourceFileName());
-
-		return $this->source;
-	}
-
-	public function setSource($source)
-	{
-		if ($source <> '')
-		{
-			$this->source = $source;
-			$file = $this->getSourceFileName();
-			file_put_contents($file, $source);
-			@chmod($file, $this->getConfig('filePermissions'));
-		}
+		$this->files = new BatchFiles($batchId);
 	}
 
 	public function exists()
 	{
-		return file_exists($this->getSourceFileName());
+		return $this->files->sourceExists();
 	}
 
 	public function create()
@@ -220,27 +201,24 @@ EOT;
 
 	public function getBatch()
 	{
-		if (!$this->exists())
-		{
+		if (!$this->exists()) {
 			throw new \Exception('Batch with id "' . $this->batchId . '" not found');
 		}
 
 		$myBatch = null;
+		$cacheFile = TMP_PATH.'batch-cache'.DS.$this->batchId.'.txt';
 
-		if (!file_exists($this->getCacheFileName()) ||
-			filemtime($this->getSourceFileName()) > filemtime($this->getCacheFileName()) ) // || true)
+		if (!file_exists($cacheFile) or 
+			$this->files->getLatestMTime() >= filemtime($cacheFile)) // || true)
 		{
 			$source = $this->parse();
-			//print_r($source);
 			$bb = new BatchBuilder($this->batchId, $source);
 			$myBatch = $bb->getBatch();
 			$myBatch2 = clone $myBatch;
-			$file = $this->getCacheFileName();
-			file_put_contents($file, serialize($myBatch2));
-			chmod($file, $this->getConfig('filePermissions'));
-		} else
-		{
-			$myBatch = file_get_contents($this->getCacheFileName());
+			file_put_contents($cacheFile, serialize($myBatch2));
+			chmod($cacheFile, $this->getConfig('filePermissions'));
+		} else {
+			$myBatch = file_get_contents($cacheFile);
 			$myBatch = unserialize($myBatch);
 		}
 
@@ -250,7 +228,7 @@ EOT;
 	private function parse() 
 	{
 		$data = array();
-		$source = $this->getSource();
+		$source = $this->files->readSource();
 		$source = $this->normalize($source);
 		$source = $this->resolveMacros($source);
 		$source = $this->resolveForLoops($source);
@@ -419,15 +397,5 @@ EOT;
 		$source = preg_replace('/\ *\n/', "\n", $source);
 
 		return $source;
-	}
-
-	private function getSourceFileName()
-	{
-		return BATCH_PATH . $this->batchId . DS .'definition.qcs';
-	}
-
-	private function getCacheFileName()
-	{
-		return TMP_PATH . 'batch-cache' . DS . $this->batchId . '.txt';
 	}
 }

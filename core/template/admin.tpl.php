@@ -14,6 +14,7 @@
 		<?= $T->css('vendor/codemirror/CodeMirror/lib/codemirror.css') ?>
 		<?= $T->css('vendor/codemirror/CodeMirror/theme/ambiance.css') ?>
 		<?= $T->js('vendor/codemirror/CodeMirror/lib/codemirror.js') ?>
+		<?= $T->js('vendor/codemirror/CodeMirror/mode/xml/xml.js') ?>
 		<?= $T->js('core/files/js/qc-script.js') ?>
     </head>
 	<body>

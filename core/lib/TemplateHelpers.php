@@ -48,6 +48,27 @@ class TemplateHelpers
         return $hours . ':' . $minutes . ':' . $seconds;
     }
 
+    public function formatFileSize($size) {
+        $digits = 1;
+        if ($size < 1024) {
+            $r = $size;
+            $u = "B";
+            $digits = 0;
+        } elseif ($size < 1024 * 1024) {
+            $r = round($size / 1024, 1);
+            $u = "KiB";
+        } elseif ($size < 1024 * 1024 * 1024) {
+            $r = round($size / 1024 / 1024, 1);
+            $u = "MiB"; 
+        } else {
+            $r = round($size / 1024 / 1024 / 1024, 1);
+            $u = "GiB"; 
+        }       
+
+        $r = number_format($r, $digits, ',', '') . " " . $u;
+        return $r;
+    }
+
     public function formatPropertyValue($pv)
     {
         if ($pv === true) return '<i>True</i>';
@@ -59,6 +80,10 @@ class TemplateHelpers
     public function ifset(&$var) 
     {
         return (isset($var) ? $var : '');
+    }
+
+    public function endsWith($haystack, $needle) {
+        return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
     }
 
     public function js($file)

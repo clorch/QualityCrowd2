@@ -4,6 +4,9 @@
 	<li <?= ($subpage == '' ? 'class="active"' : '') ?>>
 		<?= $T->link('View', 'admin/batch/'.$id) ?>
 	</li>
+	<li <?= ($subpage == 'settings' ? 'class="active"' : '') ?>>
+		<?= $T->link('Settings', 'admin/batch/'.$id.'/settings') ?>
+	</li>
 	<li <?= ($subpage == 'edit' ? 'class="active"' : '') ?>>
 		<?= $T->link('Edit', 'admin/batch/'.$id.'/edit') ?>
 	</li>
