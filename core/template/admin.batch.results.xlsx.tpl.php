@@ -39,7 +39,12 @@ function outputResults($sheet, $columns, $workers)
 	$sheet->setCellValue('A1', 'Worker ID')
           ->setCellValue('B1', 'Finished');
 	$c = 2;
+
 	foreach($columns as $stepId => $cols) {
+		$sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
+		$sheet->setCellValueByColumnAndRow($c, 2, 'Step Id');
+    	$c++;
+
 		foreach($cols as $col) {
 			$sheet->setCellValueByColumnAndRow($c, 1, 'Step ' . ($stepId + 1));
 			$sheet->setCellValueByColumnAndRow($c, 2, $col);
@@ -58,10 +63,16 @@ function outputResults($sheet, $columns, $workers)
 			continue;
 		}
 
+		$stepMap = $worker['stepMap'];
+
 		$c = 2;
-		foreach($worker['results'] as $result) {
-			array_shift($result); // step id
+		foreach($worker['results'] as $stepNum => $result) {
+			array_shift($result); // step number
 			array_shift($result); // timestamp
+
+			// step id
+			$sheet->setCellValueByColumnAndRow($c, $r, $stepMap[$stepNum] + 1);
+			$c++;
 
 			foreach($result as $value) {
 				$sheet->setCellValueByColumnAndRow($c, $r, $value);
