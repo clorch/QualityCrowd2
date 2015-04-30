@@ -125,10 +125,8 @@ function outputStepMaps($sheet, $columns, $workers)
 
 		if (is_array($worker['stepMap'])) {
 			$c = 2;
-			$rmap = array_flip($worker['stepMap']);
-			ksort($rmap);
-			foreach($rmap as $stepId => $stepNum) {
-				$sheet->setCellValueByColumnAndRow($c, $r, $stepNum + 1);
+			foreach($worker['stepMap'] as $stepNum => $stepId) {
+				$sheet->setCellValueByColumnAndRow($c, $r, $stepId + 1);
 				$c++;
 			}
 		}

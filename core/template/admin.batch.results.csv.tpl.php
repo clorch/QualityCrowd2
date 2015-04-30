@@ -3,12 +3,12 @@ header('Content-type: text/csv');
 header('Content-disposition: attachment;filename=' . $batchId . '.csv');
 
 // Header line 1
-echo 'Worker ID,Finished';
+echo csvEscape('Worker ID').','.csvEscape('Finished');
 foreach($columns as $stepId => $cols) {
-	echo ',Step ' . ($stepId + 1) . ' duration';
-	echo ',Step ' . ($stepId + 1) . ' step number';
+	echo ',' . csvEscape('Step ' . ($stepId + 1) . ' - id');
+	echo ',' .csvEscape('Step ' . ($stepId + 1) . ' - duration');
 	foreach($cols as $col) {
-		echo ',Step ' . ($stepId + 1) . ' ' . $col;
+		echo ',' . csvEscape('Step ' . ($stepId + 1) . ' - ' . $col);
 	}
 }
 echo "\n";
@@ -24,20 +24,29 @@ foreach($workers as $worker)
 		continue;
 	}
 
-	$rmap = array_flip($worker['stepMap']);
+	$stepMap = $worker['stepMap'];
+	$rmap = array_flip($stepMap);
 
-	foreach($worker['results'] as $sk => $result)
+	foreach($worker['results'] as $stepNum => $result)
 	{
 		array_shift($result); // step id
 		array_shift($result); // timestamp
 
-		echo ',' . $worker['durations'][$sk];
-		echo ',' . strval(intval($rmap[$sk]) + 1);
+		echo ',' . strval(intval($stepMap[$stepNum]) + 1);
+		echo ',' . $worker['durations'][$stepMap[$stepNum]];
 
 		foreach($result as $value) {
-			echo ',' . $value; 
+			echo ',' . csvEscape($value); 
 		}
 	}
 
 	echo "\n";
+}
+
+function csvEscape($value) {
+	if (is_numeric($value)) {
+		return $value;
+	} else {
+		return '"'.str_replace('"', '\"', $value).'"';
+	}
 }
