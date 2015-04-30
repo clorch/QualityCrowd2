@@ -126,8 +126,9 @@ foreach($results as $stepId => &$step)
 
 <h3>Download Results</h3>
 <ul>
-	<li><?= $T->link('Downlad as CSV-file', 'admin/batch/'.$id.'/results.csv') ?></li>
-	<li><?= $T->link('Downlad as XLSX-file', 'admin/batch/'.$id.'/results.xlsx') ?></li>
+	<li><?= $T->link('Download as XLSX-file', 'admin/batch/'.$id.'/results.xlsx') ?></li>
+	<li><?= $T->link('Download as CSV-file', 'admin/batch/'.$id.'/results.csv') ?></li>
+	<li><?= $T->link('Download as normalized CSV-file', 'admin/batch/'.$id.'/results-normalized.csv') ?></li>
 </ul>
 
 <h3>Workers per Step</h3>

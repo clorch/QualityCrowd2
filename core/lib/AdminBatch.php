@@ -71,6 +71,14 @@ class AdminBatch extends AdminPage
 			exit;
 			break;
 
+		case 'results-normalized.csv':
+			$myTpl = new Template('admin.batch.results-normalized.csv');
+			$myTpl->set('batchId', $batchId);
+			$myTpl->set('workers', $batch->workers(true));
+			echo $myTpl->render();
+			exit;
+			break;
+
 		case 'results.xlsx':
 			$myTpl = new Template('admin.batch.results.xlsx');
 			$myTpl->set('batchId', $batchId);

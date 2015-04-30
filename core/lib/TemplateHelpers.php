@@ -103,4 +103,13 @@ class TemplateHelpers
         $str = '<a href="'.BASE_URL.$url.'">'.$text.'</a>';
         return $str;
     }
+
+    public function csvEscape($value) 
+    {
+        if (is_numeric($value)) {
+            return $value;
+        } else {
+            return '"'.str_replace('"', '\"', $value).'"';
+        }
+    }
 }
