@@ -34,10 +34,12 @@ endforeach; ?>
 	{
 		if (currentRound_<?= $uid ?> < 0) {
 			$('#button-start-<?= $uid ?>').hide();
-		} else {
+		} else if (currentRound_<?= $uid ?> < maxRounds_<?= $uid ?>) {
 			var end = new Date().getTime();
 			$('input[name=timing-'+currentRound_<?= $uid ?>+'-<?= $uid ?>]').val(end - startTime_<?= $uid ?>);
 			$('input[name=decision-'+currentRound_<?= $uid ?>+'-<?= $uid ?>]').val(selectedString);
+		} else {
+			return; // do nothing
 		}
 
 		startTime_<?= $uid ?> = new Date().getTime();
@@ -77,5 +79,20 @@ endforeach; ?>
 	$('#button-start-<?= $uid ?>').click( function () {
 		nextRound_<?= $uid ?>('');
 		return false; // prevent default action
+	});
+
+	$(document).keydown(function(e) {
+	    switch(e.which) {
+	        case 37: // left
+	        nextRound_<?= $uid ?>($('#button-left-<?= $uid ?>').html());
+	        break;
+
+	        case 39: // right
+	        nextRound_<?= $uid ?>($('#button-right-<?= $uid ?>').html());
+	        break;
+
+	        default: return; // exit this handler for other keys
+	    }
+	    e.preventDefault(); // prevent the default action (scroll / move caret)
 	});
 </script>
