@@ -1,6 +1,10 @@
 <input type="hidden" name="answered-<?= $uid ?>" value="0">
 
 <?php 
+
+$enableClick = false;
+$enableKeyboard = true;
+
 $i = 0;
 $arr = "";
 foreach($answers as $a): ?>
@@ -66,6 +70,7 @@ endforeach; ?>
 		}
 	}
 
+<?php if($enableClick): ?>
 	$('#button-left-<?= $uid ?>').click( function () {
 		nextRound_<?= $uid ?>($('#button-left-<?= $uid ?>').html());
 		return false; // prevent default action
@@ -80,7 +85,9 @@ endforeach; ?>
 		nextRound_<?= $uid ?>('');
 		return false; // prevent default action
 	});
+<?php endif; ?>
 
+<?php if($enableKeyboard): ?>
 	$(document).keydown(function(e) {
 	    switch(e.which) {
 	        case 37: // left
@@ -94,5 +101,6 @@ endforeach; ?>
 	        default: return; // exit this handler for other keys
 	    }
 	    e.preventDefault(); // prevent the default action (scroll / move caret)
-	});
+    });
+<?php endif; ?>
 </script>
