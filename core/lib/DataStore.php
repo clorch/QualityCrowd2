@@ -197,7 +197,7 @@ class DataStore extends Base
 	            if ($file == "." || $file == "..") continue;
 	            
 	            if (is_dir($dir.DS.$file)) {
-	                rrmdir($dir.DS.$file);
+	                $this->rrmdir($dir.DS.$file);
 	            } else {   
 	                @chmod($dir.DS.$file, 0777);
 	                unlink($dir.DS.$file);
