@@ -330,11 +330,12 @@ class Batch extends Base
 				if (count($result) == 0) continue;
 
 				foreach($result as $wid => $value) {
-					$mean = $step['result-stats']['mean'][$key];
 					if (!isset($sd[$key])) {
 						$sd[$key] = 0;
+						$mean = $step['result-stats']['mean'][$key];
+					} else {
+						$sd[$key] += ($mean - $value) * ($mean - $value);
 					}
-					$sd[$key] += ($mean - $value) * ($mean - $value);
 				}
 			}
 
