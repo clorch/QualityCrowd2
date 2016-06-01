@@ -37,9 +37,9 @@ Requirements
 ------------
 
  - HTTP server, perferably Apache httpd
- - PHP, recommended >= 5.4
+ - PHP, recommended >= 5.4, also compatible to PHP 7
 
-Qualitycrowd 2 has been developed and tested with Apache httpd 2.4.10 and PHP 5.6.3 under a UNIX-style OS. Windows compatibility has been tested quickly but has not the highest priority.
+Qualitycrowd 2 has been developed and tested with Apache httpd 2.4.10 and PHP 5.6.20 under a UNIX-style OS. Windows compatibility has been tested quickly but has not the highest priority.
 
 Setup
 -----
