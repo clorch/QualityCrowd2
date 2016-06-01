@@ -1,11 +1,57 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "45753082b6bcf11ffb12e0b9c0fda62a",
+    "hash": "3d4cb9d91a8d3f30bae923043a6a6edb",
+    "content-hash": "35ed4db9caab6b456be70b7aa6e5432c",
     "packages": [
+        {
+            "name": "amenadiel/jpgraph",
+            "version": "3.6.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HuasoFoundries/jpgraph.git",
+                "reference": "6596bdfd8c406672bd165bf7754df1130158ddac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HuasoFoundries/jpgraph/zipball/6596bdfd8c406672bd165bf7754df1130158ddac",
+                "reference": "6596bdfd8c406672bd165bf7754df1130158ddac",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Amenadiel\\JpGraph\\": "src/",
+                    "Amenadiel\\JpGraph\\Graph\\": "src/graph",
+                    "Amenadiel\\JpGraph\\Image\\": "src/image",
+                    "Amenadiel\\JpGraph\\Plot\\": "src/plot",
+                    "Amenadiel\\JpGraph\\Text\\": "src/text",
+                    "Amenadiel\\JpGraph\\Themes\\": "src/themes",
+                    "Amenadiel\\JpGraph\\Util\\": "src/util"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "QPL 1.0"
+            ],
+            "description": "jpGraph, library to make graphs and charts",
+            "homepage": "http://jpgraph.net/",
+            "keywords": [
+                "chart",
+                "data",
+                "graph",
+                "jpgraph",
+                "pie"
+            ],
+            "time": "2016-03-11 13:58:40"
+        },
         {
             "name": "codemirror/CodeMirror",
             "version": "5.0.0",
@@ -58,46 +104,6 @@
                 "user agent"
             ],
             "time": "2014-02-04 09:18:51"
-        },
-        {
-            "name": "jpgraph/jpgraph",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ztec/JpGraph.git",
-                "reference": "ad26df5941e847cf1255aecd2011ce16207304cf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ztec/JpGraph/zipball/ad26df5941e847cf1255aecd2011ce16207304cf",
-                "reference": "ad26df5941e847cf1255aecd2011ce16207304cf",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "JpGraph": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "QPL 1.0"
-            ],
-            "authors": [
-                {
-                    "name": "JpGraph team"
-                }
-            ],
-            "description": "jpGraph, library to make graphs and charts",
-            "homepage": "http://jpgraph.net/",
-            "keywords": [
-                "chart",
-                "data",
-                "graph",
-                "jpgraph",
-                "pie"
-            ],
-            "time": "2013-05-23 14:04:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -211,9 +217,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "jpgraph/jpgraph": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

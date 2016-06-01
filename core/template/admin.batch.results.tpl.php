@@ -1,4 +1,8 @@
 <?php
+use Amenadiel\JpGraph\Graph;
+use Amenadiel\JpGraph\Plot;
+use Amenadiel\JpGraph\Themes;
+
 if (count($results) == 0) {
 	echo "<p>No results available</p>";
 	return;
@@ -7,11 +11,6 @@ if (count($results) == 0) {
 if(!function_exists("imageantialias")) {
 	function imageantialias($image, $enabled) { return false; }
 }
-
-JpGraph\JpGraph::load();
-JpGraph\JpGraph::module('bar');
-JpGraph\JpGraph::module('line');
-JpGraph\JpGraph::module('plotline');
 
 // prepare workers graph
 $dataY = array();
@@ -26,10 +25,10 @@ foreach($results as $stepId => &$step)
 }
 
 // setup the graph
-$graph = new Graph(760,300);
+$graph = new Graph\Graph(760,300);
 $graph->SetScale("textint");
 
-$theme_class = new UniversalTheme;
+$theme_class = new Themes\UniversalTheme;
 
 $graph->SetTheme($theme_class);
 $graph->img->SetAntiAliasing(true);
@@ -48,13 +47,13 @@ $graph->xaxis->SetTitle("Step", 'center');
 $graph->xgrid->SetColor('#E3E3E3');
 
 // plot bars
-$p1 = new BarPlot($dataY);
+$p1 = new Plot\BarPlot($dataY);
 $graph->Add($p1);
 $p1->SetColor("olivedrab3");
 $p1->SetFillGradient('olivedrab1','olivedrab4',GRAD_VERT);
 
 // plot finished lines
-$pF = new PlotLine(HORIZONTAL, $finished, 'olivedrab4', 1);
+$pF = new Plot\PlotLine(HORIZONTAL, $finished, 'olivedrab4', 1);
 $graph->Add($pF);
 
 // output graph to temp file
@@ -81,10 +80,10 @@ foreach($results as $stepId => &$step)
 		if (count($dataY) == 0) continue;
 
 		// setup the graph
-		$graph = new Graph(350,120);
+		$graph = new Graph\Graph(350,120);
 		$graph->SetScale("textint");
 
-		$theme_class = new UniversalTheme;
+		$theme_class = new Themes\UniversalTheme;
 
 		$graph->SetTheme($theme_class);
 		$graph->img->SetAntiAliasing(true);
@@ -97,24 +96,24 @@ foreach($results as $stepId => &$step)
 		$graph->yaxis->HideTicks(false, false);
 
 		// plot bars
-		$p1 = new BarPlot($dataY);
+		$p1 = new Plot\BarPlot($dataY);
 		$graph->Add($p1);
 		$p1->SetColor("olivedrab3");
 		$p1->SetFillGradient('olivedrab1','olivedrab4',GRAD_VERT);
 
-		$pAvg = new PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key], '#000000', 1);
+		$pAvg = new Plot\PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key], '#000000', 1);
 		$graph->Add($pAvg);
 
-		$pMin = new PlotLine(HORIZONTAL, $step['result-stats']['min'][$key], '#008800', 1);
+		$pMin = new Plot\PlotLine(HORIZONTAL, $step['result-stats']['min'][$key], '#008800', 1);
 		$graph->Add($pMin);
 
-		$pMax = new PlotLine(HORIZONTAL, $step['result-stats']['max'][$key], '#ff0000', 1);
+		$pMax = new Plot\PlotLine(HORIZONTAL, $step['result-stats']['max'][$key], '#ff0000', 1);
 		$graph->Add($pMax);
 
-		$pSd1 = new PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key] + $step['result-stats']['sd'][$key] / 2, '#0000ff', 1);
+		$pSd1 = new Plot\PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key] + $step['result-stats']['sd'][$key] / 2, '#0000ff', 1);
 		$graph->Add($pSd1);
 
-		$pSd2 = new PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key] - $step['result-stats']['sd'][$key] / 2, '#0000ff', 1);
+		$pSd2 = new Plot\PlotLine(HORIZONTAL, $step['result-stats']['mean'][$key] - $step['result-stats']['sd'][$key] / 2, '#0000ff', 1);
 		$graph->Add($pSd2);
 
 		// output graph to temp file

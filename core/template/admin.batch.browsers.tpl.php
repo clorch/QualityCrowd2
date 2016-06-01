@@ -1,4 +1,8 @@
 <?php
+use Amenadiel\JpGraph\Graph;
+use Amenadiel\JpGraph\Plot;
+use Amenadiel\JpGraph\Themes;
+
 if (count($workers) == 0) {
 	echo "<p>No results available</p>";
 	return;
@@ -7,9 +11,6 @@ if (count($workers) == 0) {
 if(!function_exists("imageantialias")) {
 	function imageantialias($image, $enabled) { return false; }
 }
-
-JpGraph\JpGraph::load();
-JpGraph\JpGraph::module('pie');
 
 ini_set('memory_limit', '-1'); // may be required for initial downloading
 $bc = new phpbrowscap\Browscap(TMP_PATH.'browscap');
@@ -45,15 +46,15 @@ foreach ($data as &$d) {
 foreach($data as $key => &$d)
 {
 	// setup the graph
-	$graph = new PieGraph(400,300);
-	$theme_class= new UniversalTheme;
+	$graph = new Graph\PieGraph(400,300);
+	$theme_class= new Themes\UniversalTheme;
 	$graph->SetTheme($theme_class);
 	
 	$graph->img->SetAntiAliasing(true);
 	$graph->SetBox(false);
 
 	// plot pie
-	$p1 = new PiePlot(array_values($d['values']));
+	$p1 = new Plot\PiePlot(array_values($d['values']));
 	$graph->Add($p1);
 	$p1->SetLegends(array_keys($d['values']));
 	$p1->SetSize(0.38);
