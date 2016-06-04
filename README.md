@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/clorch/QualityCrowd2/badges/gpa.svg)](https://codeclimate.com/github/clorch/QualityCrowd2)
+
 QualityCrowd 2
 ==============
 
